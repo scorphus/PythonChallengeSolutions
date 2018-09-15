@@ -1,7 +1,3 @@
-04-linkedlist-cache.p
-*png
-*jpg
-*gif
-*txt
-*wav
-package.pack
+*
+!*.py
+!*.rs
