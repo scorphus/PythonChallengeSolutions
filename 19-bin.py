@@ -10,12 +10,14 @@
 
 # http://www.pythonchallenge.com/pc/hex/bin.html
 
+from base64 import encodebytes
+from urllib.request import Request
+from urllib.request import urlopen
+
 import email
 import io
 import wave
 
-from base64 import encodebytes
-from urllib.request import Request, urlopen
 
 url = "http://www.pythonchallenge.com/pc/hex/bin.html"
 auth = encodebytes(b"butter:fly").decode().rstrip()

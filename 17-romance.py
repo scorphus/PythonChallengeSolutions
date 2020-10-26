@@ -11,14 +11,18 @@
 # http://www.pythonchallenge.com/pc/def/linkedlist.php
 # http://www.pythonchallenge.com/pc/def/linkedlist.php?nothing=12345
 
-import bz2
-import sys
-
 from contextlib import suppress
 from http.cookiejar import CookieJar
 from urllib.parse import unquote_to_bytes
-from urllib.request import HTTPCookieProcessor, Request, build_opener, urlopen
+from urllib.request import build_opener
+from urllib.request import HTTPCookieProcessor
+from urllib.request import Request
+from urllib.request import urlopen
 from xmlrpc.client import ServerProxy
+
+import bz2
+import sys
+
 
 url = "http://www.pythonchallenge.com/pc/def/linkedlist.php?busynothing={}"
 curr = 12345

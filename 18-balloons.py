@@ -12,12 +12,14 @@
 # http://www.pythonchallenge.com/pc/return/brightness.html
 # Source mentions deltas.gz
 
-import gzip
-
 from base64 import encodebytes
 from contextlib import ExitStack
 from difflib import Differ
-from urllib.request import Request, urlopen
+from urllib.request import Request
+from urllib.request import urlopen
+
+import gzip
+
 
 url = "http://www.pythonchallenge.com/pc/return/deltas.gz"
 auth = encodebytes(b"huge:file").decode().rstrip()

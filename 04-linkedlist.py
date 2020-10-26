@@ -11,10 +11,11 @@
 # http://www.pythonchallenge.com/pc/def/linkedlist.php
 # http://www.pythonchallenge.com/pc/def/linkedlist.php?nothing=12345
 
+from urllib.request import urlopen
+
 import pickle
 import sys
 
-from urllib.request import urlopen
 
 cache_file = "04-linkedlist-cache.p"
 

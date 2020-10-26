@@ -11,9 +11,10 @@
 # http://www.pythonchallenge.com/pc/def/peak.html
 # Source mentions banner.p
 
+from urllib.request import urlopen
+
 import pickle
 
-from urllib.request import urlopen
 
 url = "http://www.pythonchallenge.com/pc/def/banner.p"
 

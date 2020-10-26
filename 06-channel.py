@@ -11,11 +11,12 @@
 # http://www.pythonchallenge.com/pc/def/channel.html
 # Source mentions zip
 
-import sys
-
 from io import BytesIO
 from urllib.request import urlopen
 from zipfile import ZipFile
+
+import sys
+
 
 url = "http://www.pythonchallenge.com/pc/def/channel.zip"
 zip_content = urlopen(url).read()

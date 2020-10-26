@@ -13,8 +13,10 @@
 from base64 import encodebytes
 from io import BytesIO
 from urllib.error import HTTPError
-from urllib.request import Request, urlopen
+from urllib.request import Request
+from urllib.request import urlopen
 from zipfile import ZipFile
+
 
 url = "http://www.pythonchallenge.com/pc/hex/unreal.jpg"
 auth = encodebytes(b"butter:fly").decode().rstrip()

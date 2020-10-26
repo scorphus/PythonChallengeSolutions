@@ -10,9 +10,10 @@
 
 # http://www.pythonchallenge.com/pc/def/equality.html
 
+from urllib.request import urlopen
+
 import re
 
-from urllib.request import urlopen
 
 url = "http://www.pythonchallenge.com/pc/def/equality.html"
 page_source = urlopen(url).read().decode().strip()

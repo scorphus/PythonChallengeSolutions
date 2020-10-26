@@ -10,9 +10,11 @@
 
 # http://www.pythonchallenge.com/pc/return/mozart.html
 
-from PIL import Image  # pip install pillow
 from base64 import encodebytes
-from urllib.request import Request, urlopen
+from PIL import Image
+from urllib.request import Request
+from urllib.request import urlopen
+
 
 url = "http://www.pythonchallenge.com/pc/return/mozart.gif"
 auth = encodebytes(b"huge:file").decode().rstrip()

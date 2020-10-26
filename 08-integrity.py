@@ -10,9 +10,10 @@
 
 # http://www.pythonchallenge.com/pc/def/integrity.html
 
+from urllib.request import urlopen
+
 import bz2
 
-from urllib.request import urlopen
 
 url = "http://www.pythonchallenge.com/pc/def/integrity.html"
 page_source = urlopen(url).read().decode("unicode_escape").encode("latin1")

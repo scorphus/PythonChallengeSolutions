@@ -10,9 +10,11 @@
 
 # http://www.pythonchallenge.com/pc/return/5808.html
 
-from PIL import Image  # pip install pillow
 from base64 import encodebytes
-from urllib.request import Request, urlopen
+from PIL import Image
+from urllib.request import Request
+from urllib.request import urlopen
+
 
 url = "http://www.pythonchallenge.com/pc/return/cave.jpg"
 auth = encodebytes(b"huge:file").decode().rstrip()

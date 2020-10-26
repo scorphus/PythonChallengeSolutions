@@ -13,6 +13,7 @@
 from collections import defaultdict
 from urllib.request import urlopen
 
+
 url = "http://www.pythonchallenge.com/pc/def/ocr.html"
 page_source = urlopen(url).read().decode().strip()
 page_data = page_source.split("<!--")[2].split("-->")[0]

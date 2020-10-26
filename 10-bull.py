@@ -11,7 +11,8 @@
 # http://www.pythonchallenge.com/pc/return/bull.html
 
 from base64 import encodebytes
-from urllib.request import Request, urlopen
+from urllib.request import Request
+from urllib.request import urlopen
 
 
 def describe(n):

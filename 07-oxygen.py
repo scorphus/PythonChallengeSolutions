@@ -11,10 +11,12 @@
 # http://www.pythonchallenge.com/pc/def/oxygen.html
 # Source mentions oxygen.png
 
-import png  # pip install pypng
-
-from itertools import islice, takewhile
+from itertools import islice
+from itertools import takewhile
 from urllib.request import urlopen
+
+import png
+
 
 url = "http://www.pythonchallenge.com/pc/def/oxygen.png"
 png_reader = png.Reader(urlopen(url))

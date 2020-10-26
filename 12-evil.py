@@ -13,7 +13,8 @@
 # Try evil2.jpg which then mentions evil2.gfx
 
 from base64 import encodebytes
-from urllib.request import Request, urlopen
+from urllib.request import Request
+from urllib.request import urlopen
 
 
 def identify(image, header_size=10):
