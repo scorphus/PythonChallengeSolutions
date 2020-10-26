@@ -1,0 +1,27 @@
+name: PythonChallengeSolutions
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version:
+          - 3.7
+          - 3.8
+          - 3.9
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: setup-ci
+        run: make setup-ci
+      - name: isort
+        run: make isort
+      - name: black
+        run: make black
+      - name: flake8
+        run: make flake8
+      - name: run
+        run: make run

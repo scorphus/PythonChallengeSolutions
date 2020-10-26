@@ -1,4 +1,4 @@
-# Python Challenge Solutions
+# Python Challenge Solutions [![PythonChallengeSolutions][badge]][build]
 
 **To keep the axe sharp!**
 
@@ -19,3 +19,6 @@ Code in this repository is distributed under the terms of the 3-Clause BSD
 License (BSD-3-Clause).
 
 See [LICENSE](LICENSE) for details.
+
+[badge]: https://github.com/scorphus/PythonChallengeSolutions/workflows/PythonChallengeSolutions/badge.svg
+[build]: https://github.com/scorphus/PythonChallengeSolutions/actions?query=workflow%3APythonChallengeSolutions
