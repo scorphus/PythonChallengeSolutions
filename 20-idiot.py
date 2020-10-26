@@ -57,5 +57,6 @@ headers["Range"] = f"bytes={range_start}-{content_max}"
 req = urlopen(Request(url=url, headers=headers))
 zip_content = req.read()
 with ZipFile(BytesIO(zip_content), "r") as zip_file:
-    print(f'Open {" and ".join(zip_file.namelist())}')
-    zip_file.extractall(pwd=pwd.encode())
+    readme, package = zip_file.namelist()
+    print(zip_file.extract(package, pwd=pwd.encode()))
+    print(zip_file.read(readme, pwd=pwd.encode()).decode())
