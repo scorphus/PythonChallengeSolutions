@@ -6,7 +6,7 @@
 
 # Licensed under the BSD-3-Clause license:
 # https://opensource.org/licenses/BSD-3-Clause
-# Copyright (c) 2018, Pablo S. Blum de Aguiar <scorphus@gmail.com>
+# Copyright (c) 2018-2020, Pablo S. Blum de Aguiar <scorphus@gmail.com>
 
 # http://www.pythonchallenge.com/pc/return/5808.html
 
