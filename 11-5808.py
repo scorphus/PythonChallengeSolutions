@@ -14,9 +14,9 @@ from PIL import Image  # pip install pillow
 from base64 import encodebytes
 from urllib.request import Request, urlopen
 
-url = 'http://www.pythonchallenge.com/pc/return/cave.jpg'
-auth = encodebytes(b'huge:file').decode().rstrip()
-headers = {'Authorization': f'Basic {auth}'}
+url = "http://www.pythonchallenge.com/pc/return/cave.jpg"
+auth = encodebytes(b"huge:file").decode().rstrip()
+headers = {"Authorization": f"Basic {auth}"}
 
 image = Image.open(urlopen(Request(url=url, headers=headers)))
 hidden = Image.new(image.mode, [d // 2 for d in image.size])
@@ -27,5 +27,5 @@ for x in range(image.width):
             pixel = image.getpixel((x, y))
             hidden.putpixel((x // 2, y // 2), pixel)
 
-hidden.save('11-hidden.jpg', 'JPEG')
-print('Open 11-hidden.jpg')
+hidden.save("11-hidden.jpg", "JPEG")
+print("Open 11-hidden.jpg")

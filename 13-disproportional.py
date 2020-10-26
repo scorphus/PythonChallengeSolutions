@@ -12,8 +12,8 @@
 
 from xmlrpc.client import ServerProxy
 
-url = 'http://www.pythonchallenge.com/pc/phonebook.php'
+url = "http://www.pythonchallenge.com/pc/phonebook.php"
 
 with ServerProxy(url) as proxy:
     print("system.listMethods(): {}".format(proxy.system.listMethods()))
-    print("phone('Bert'): {}".format(proxy.phone('Bert')))
+    print("phone('Bert'): {}".format(proxy.phone("Bert")))

@@ -19,9 +19,9 @@ from contextlib import ExitStack
 from difflib import Differ
 from urllib.request import Request, urlopen
 
-url = 'http://www.pythonchallenge.com/pc/return/deltas.gz'
-auth = encodebytes(b'huge:file').decode().rstrip()
-headers = {'Authorization': f'Basic {auth}'}
+url = "http://www.pythonchallenge.com/pc/return/deltas.gz"
+auth = encodebytes(b"huge:file").decode().rstrip()
+headers = {"Authorization": f"Basic {auth}"}
 
 delta_l, delta_r = [], []
 
@@ -34,19 +34,19 @@ with gzip.open(urlopen(Request(url=url, headers=headers))) as deltas:
 differ = Differ()
 
 with ExitStack() as stack:
-    left = stack.enter_context(open('18-left.png', 'wb'))
-    right = stack.enter_context(open('18-right.png', 'wb'))
-    equal = stack.enter_context(open('18-equal.png', 'wb'))
+    left = stack.enter_context(open("18-left.png", "wb"))
+    right = stack.enter_context(open("18-right.png", "wb"))
+    equal = stack.enter_context(open("18-equal.png", "wb"))
     for diff in differ.compare(delta_l, delta_r):
         try:
-            chunk = bytes([int(b, 16) for b in diff[2:].split(' ')])
+            chunk = bytes([int(b, 16) for b in diff[2:].split(" ")])
         except ValueError:
             chunk = bytes(len(chunk))
-        if diff[0] is '-':
+        if diff[0] is "-":
             left.write(chunk)
-        elif diff[0] is '+':
+        elif diff[0] is "+":
             right.write(chunk)
         else:
             equal.write(chunk)
 
-print('Open 18-left.png, 18-right.png and 18-equal.png')
+print("Open 18-left.png, 18-right.png and 18-equal.png")

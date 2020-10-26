@@ -14,11 +14,11 @@ from datetime import datetime
 
 start = 1996  # Last leap year of the second millennium
 
-probable_dates = ''
+probable_dates = ""
 for year in range(start, 1000, -20):
-    day = f'{year}-01-27'
-    date = datetime.strptime(day, '%Y-%m-%d')
+    day = f"{year}-01-27"
+    date = datetime.strptime(day, "%Y-%m-%d")
     if date.weekday() == 1:
-        probable_dates += f'\n * {day}'
+        probable_dates += f"\n * {day}"
 
-print(f'Probable dates are:{probable_dates}\nCheck what happened on them!')
+print(f"Probable dates are:{probable_dates}\nCheck what happened on them!")

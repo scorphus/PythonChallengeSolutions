@@ -14,9 +14,9 @@ from PIL import Image  # pip install pillow
 from base64 import encodebytes
 from urllib.request import Request, urlopen
 
-url = 'http://www.pythonchallenge.com/pc/return/wire.png'
-auth = encodebytes(b'huge:file').decode().rstrip()
-headers = {'Authorization': f'Basic {auth}'}
+url = "http://www.pythonchallenge.com/pc/return/wire.png"
+auth = encodebytes(b"huge:file").decode().rstrip()
+headers = {"Authorization": f"Basic {auth}"}
 
 image = Image.open(urlopen(Request(url=url, headers=headers)))
 new_image = Image.new(image.mode, (100, 100))
@@ -30,5 +30,5 @@ for pixel in reversed(image.getdata()):
         dx, dy = -dy, dx
     x, y = x + dx, y + dy
 
-new_image.save('14-italy.png', 'PNG')
-print('Open 14-italy.png')
+new_image.save("14-italy.png", "PNG")
+print("Open 14-italy.png")

@@ -16,15 +16,15 @@ import png  # pip install pypng
 from itertools import islice, takewhile
 from urllib.request import urlopen
 
-url = 'http://www.pythonchallenge.com/pc/def/oxygen.png'
+url = "http://www.pythonchallenge.com/pc/def/oxygen.png"
 png_reader = png.Reader(urlopen(url))
 height, content = png_reader.read()[1:3]
 middle_row = next(islice(content, height // 2, height // 2 + 1))
 
-message = ''.join(chr(n) for n in takewhile(
-    lambda n: n != ord(']'), islice(middle_row, 5, None, 28)
-))
-print(f'Message is: {message}...')
+message = "".join(
+    chr(n) for n in takewhile(lambda n: n != ord("]"), islice(middle_row, 5, None, 28))
+)
+print(f"Message is: {message}...")
 
-next_level = ''.join(chr(int(d)) for d in message.split('[', 1)[-1].split(', '))
-print(f'Next level: {next_level}')
+next_level = "".join(chr(int(d)) for d in message.split("[", 1)[-1].split(", "))
+print(f"Next level: {next_level}")

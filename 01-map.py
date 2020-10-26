@@ -16,17 +16,17 @@ original = (
     "sqgle qrpgle.kyicrpylq() gq pcamkkclbcb. lmu ynnjw ml rfc spj."
 )
 
-chr_a = ord('a')
-diff_az = ord('z') + 1 - chr_a
+chr_a = ord("a")
+diff_az = ord("z") + 1 - chr_a
 
-translated = ''
+translated = ""
 
 for c in original:
-    if 'a' <= c <= 'z':
+    if "a" <= c <= "z":
         c = chr(((ord(c) - chr_a + 2) % diff_az) + chr_a)
     translated += c
 
 print(translated)
 
 transtab = str.maketrans(original, translated)
-print('map'.translate(transtab))
+print("map".translate(transtab))

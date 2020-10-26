@@ -13,13 +13,13 @@
 from collections import defaultdict
 from urllib.request import urlopen
 
-url = 'http://www.pythonchallenge.com/pc/def/ocr.html'
+url = "http://www.pythonchallenge.com/pc/def/ocr.html"
 page_source = urlopen(url).read().decode().strip()
-page_data = page_source.split('<!--')[2].split('-->')[0]
+page_data = page_source.split("<!--")[2].split("-->")[0]
 
 counter = defaultdict(int)
 for char in page_data:
     counter[char] += 1
 
 chars = sorted(counter, key=counter.get)
-print(''.join(iter(lambda: chars.pop(0), '\n')))
+print("".join(iter(lambda: chars.pop(0), "\n")))

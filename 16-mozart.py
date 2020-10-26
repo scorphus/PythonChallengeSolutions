@@ -14,11 +14,11 @@ from PIL import Image  # pip install pillow
 from base64 import encodebytes
 from urllib.request import Request, urlopen
 
-url = 'http://www.pythonchallenge.com/pc/return/mozart.gif'
-auth = encodebytes(b'huge:file').decode().rstrip()
-headers = {'Authorization': f'Basic {auth}'}
+url = "http://www.pythonchallenge.com/pc/return/mozart.gif"
+auth = encodebytes(b"huge:file").decode().rstrip()
+headers = {"Authorization": f"Basic {auth}"}
 
-image = Image.open(urlopen(Request(url=url, headers=headers))).convert('RGB')
+image = Image.open(urlopen(Request(url=url, headers=headers))).convert("RGB")
 new_image = Image.new(image.mode, (2 * image.width, image.height))
 
 for y in range(image.height):
@@ -34,5 +34,5 @@ for y in range(image.height):
     for x in X:
         new_image.putpixel((threshold + x, y), image.getpixel((x, y)))
 
-new_image.save('16-mozart.png', 'PNG')
-print('Open 16-mozart.png')
+new_image.save("16-mozart.png", "PNG")
+print("Open 16-mozart.png")

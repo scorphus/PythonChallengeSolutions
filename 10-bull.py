@@ -15,24 +15,24 @@ from urllib.request import Request, urlopen
 
 
 def describe(n):
-    n_str = f'{n}'
-    desc = ''
+    n_str = f"{n}"
+    desc = ""
     curr, count = n_str[0], 0
     for digit in n_str:
         if digit != curr:
-            desc = f'{desc}{count}{curr}'
+            desc = f"{desc}{count}{curr}"
             curr, count = digit, 0
         count += 1
-    return int(f'{desc}{count}{curr}')
+    return int(f"{desc}{count}{curr}")
 
 
-url = 'http://www.pythonchallenge.com/pc/return/sequence.txt'
-auth = encodebytes(b'huge:file').decode().rstrip()
-headers = {'Authorization': f'Basic {auth}'}
+url = "http://www.pythonchallenge.com/pc/return/sequence.txt"
+auth = encodebytes(b"huge:file").decode().rstrip()
+headers = {"Authorization": f"Basic {auth}"}
 text_data = urlopen(Request(url=url, headers=headers)).read().decode()
-a = [int(n.strip()) for n in text_data.split('[')[1].split(',')[:-1]]
+a = [int(n.strip()) for n in text_data.split("[")[1].split(",")[:-1]]
 
 for i in range(len(a), 31):
     a.append(describe(a[i - 1]))
 
-print('len(a[30]) =', len(str(a[30])))
+print("len(a[30]) =", len(str(a[30])))

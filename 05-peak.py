@@ -15,7 +15,7 @@ import pickle
 
 from urllib.request import urlopen
 
-url = 'http://www.pythonchallenge.com/pc/def/banner.p'
+url = "http://www.pythonchallenge.com/pc/def/banner.p"
 
 for row in pickle.load(urlopen(url)):
-    print(''.join(char * times for char, times in row))
+    print("".join(char * times for char, times in row))
