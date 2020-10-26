@@ -42,9 +42,9 @@ with ExitStack() as stack:
             chunk = bytes([int(b, 16) for b in diff[2:].split(" ")])
         except ValueError:
             chunk = bytes(len(chunk))
-        if diff[0] is "-":
+        if diff[0] == "-":
             left.write(chunk)
-        elif diff[0] is "+":
+        elif diff[0] == "+":
             right.write(chunk)
         else:
             equal.write(chunk)
