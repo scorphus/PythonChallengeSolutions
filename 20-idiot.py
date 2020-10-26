@@ -27,12 +27,14 @@ while True:
     try:
         req = urlopen(Request(url=url, headers=headers))
         if range_start or range_end:
-            print(req.read().decode().strip())
+            msg = req.read().decode().strip()
+            print(msg)
         content_range = req.headers.get('Content-Range').replace('bytes ', '')
         range_start_end = content_range.split('/')[0]
         range_start, range_end = (int(x) for x in range_start_end.split('-'))
         range_start, range_end = range_end + 1, 2 * range_end - range_start + 2
     except HTTPError:
+        pwd = msg.split(maxsplit=2)[1].rstrip('.')[::-1]
         break
 
 content_max = int(content_range.split('/')[1])
@@ -41,6 +43,7 @@ headers['Range'] = f'bytes={content_max}-{content_max}'
 req = urlopen(Request(url=url, headers=headers))
 msg = req.read().decode().strip()
 print(f'{msg} ({msg[::-1]})')
+print(f'(password is: {pwd})')
 
 headers['Range'] = f'bytes={content_max - 3*len(msg)//2}-{content_max}'
 req = urlopen(Request(url=url, headers=headers))
@@ -53,4 +56,4 @@ req = urlopen(Request(url=url, headers=headers))
 zip_content = req.read()
 with ZipFile(BytesIO(zip_content), 'r') as zip:
     print(f'Open {" and ".join(zip.namelist())}')
-    zip.extractall(pwd=b'invader'[::-1])
+    zip.extractall(pwd=pwd.encode())
