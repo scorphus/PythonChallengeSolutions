@@ -47,3 +47,8 @@ run:
 		python $$mission; \
 	done;
 .PHONY: run
+
+# run the specified mission (e.g.: make 00-warmup.py)
+%.py: FORCE
+	@python $*.py
+FORCE:

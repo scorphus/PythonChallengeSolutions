@@ -46,9 +46,8 @@ repos:
         entry: make black
         types: [python]
         pass_filenames: false
-      - id: run
-        name: run
+      - id: run changed
+        name: run changed
         language: system
-        entry: make run
+        entry: make -B
         types: [python]
-        pass_filenames: false
