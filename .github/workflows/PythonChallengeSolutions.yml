@@ -26,3 +26,13 @@ jobs:
         run: make flake8
       - name: run
         run: make run
+      - name: Upload generated images for the sake of ... fun!
+        uses: actions/upload-artifact@v2
+        with:
+          name: images-${{ matrix.python-version }}
+          path: |
+            *.gif
+            *.png
+            *.jpg
+            *.wav
+        if: ${{ always() }}
