@@ -52,3 +52,18 @@ run:
 %.py: FORCE
 	@python $*.py
 FORCE:
+
+# clean python object, test and coverage files
+pyclean:
+	@find . -type f -name "*.pyc" -delete -print
+	@find . -type f -iname '.coverage' -exec rm -rf \{\} + -print
+	@find . -type d -iname '.pytest_cache' -exec rm -rf \{\} + -print
+	@find . -type d -iname '__pycache__' -exec rm -rf \{\} + -print
+	@find . -type d -iname '.benchmarks' -exec rm -rf \{\} + -print
+	@find . -type d -iname '*.egg-info' -exec rm -rf \{\} + -print
+.PHONY: pyclean
+
+# run `pyclean` and remove generated files
+clean: pyclean
+	@rm *.gif *.jpg *.p *.pack *.png *.txt *.wav
+.PHONY: clean
