@@ -74,4 +74,5 @@ start = find_black_square(maze, size, 0)
 finish = find_black_square(maze, size, size[1] - 1)
 data = tumble_down(maze, start, finish)
 with ZipFile(BytesIO(data), "r") as zip_file:
-    print("Check", zip_file.extract(zip_file.namelist()[0]))
+    print("Check {} and note {} (why is it there?)".format(*zip_file.namelist()))
+    zip_file.extractall()
