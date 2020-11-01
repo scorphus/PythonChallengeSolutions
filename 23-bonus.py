@@ -10,18 +10,12 @@
 
 # http://www.pythonchallenge.com/pc/hex/bonus.html
 
-from base64 import encodebytes
-from urllib.request import Request
-from urllib.request import urlopen
+from auth import read_riddle
 
 import this
 
 
-url = "http://www.pythonchallenge.com/pc/hex/bonus.html"
-auth = encodebytes(b"butter:fly").decode().rstrip()
-headers = {"Authorization": f"Basic {auth}"}
-
-riddle_source = urlopen(Request(url=url, headers=headers)).read().decode()
+riddle_source = read_riddle("http://www.pythonchallenge.com/pc/hex/bonus.html")
 riddle_data = riddle_source.split("<!--")[-1].split("-->")[0].strip("\n'")
 print(riddle_data)
 print("Translated:", "".join(this.d.get(c, c) for c in riddle_data))

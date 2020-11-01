@@ -10,27 +10,22 @@
 
 # http://www.pythonchallenge.com/pc/hex/copper.html
 
-from base64 import encodebytes
+from auth import open_url
+from auth import read_riddle
 from PIL import Image
 from PIL import ImageSequence
-from urllib.request import Request
-from urllib.request import urlopen
 
 
 url = "http://www.pythonchallenge.com/pc/hex/copper.html"
-auth = encodebytes(b"butter:fly").decode().rstrip()
-headers = {"Authorization": f"Basic {auth}"}
-
-riddle_source = urlopen(Request(url=url, headers=headers)).read().decode()
-riddle_data = riddle_source.split("<!--", 1)[-1].split("-->", 1)[0].strip()
-print(riddle_data)
+riddle_source = read_riddle(url)
+riddle_data = riddle_source.split("<!--")[-1].split("-->")[0].strip("\n'")
 
 replacement = [s for s in riddle_data.split() if "." in s][0]
 url_parts = url.split("/")
 url_parts[-1] = replacement
 url = "/".join(url_parts)
 
-image = Image.open(urlopen(Request(url=url, headers=headers)))
+image = Image.open(open_url(url))
 width, height = image.size
 assert width == height
 

@@ -10,11 +10,10 @@
 
 # http://www.pythonchallenge.com/pc/hex/ambiguity.html
 
-from base64 import encodebytes
+from auth import open_url
+from auth import read_riddle
 from io import BytesIO
 from PIL import Image
-from urllib.request import Request
-from urllib.request import urlopen
 from zipfile import ZipFile
 
 
@@ -28,14 +27,11 @@ turns_map = {
 }
 
 
-def load_maze():
+def load_maze(url):
     """Fetches and loads maze.png then returns its pixels and size"""
-    url = "http://www.pythonchallenge.com/pc/hex/ambiguity.html"
-    auth = encodebytes(b"butter:fly").decode().rstrip()
-    headers = {"Authorization": f"Basic {auth}"}
-    riddle_source = urlopen(Request(url=url, headers=headers)).read().decode()
+    riddle_source = read_riddle(url)
     url = url.replace("ambiguity.html", riddle_source.split('src="')[-1].split('"')[0])
-    maze = Image.open(urlopen(Request(url=url, headers=headers)))
+    maze = Image.open(open_url(url))
     return maze.load(), maze.size
 
 
@@ -73,7 +69,7 @@ def tumble_down(maze, start, finish):
     return bytes(data[1::2])
 
 
-maze, size = load_maze()
+maze, size = load_maze("http://www.pythonchallenge.com/pc/hex/ambiguity.html")
 start = find_black_square(maze, size, 0)
 finish = find_black_square(maze, size, size[1] - 1)
 data = tumble_down(maze, start, finish)

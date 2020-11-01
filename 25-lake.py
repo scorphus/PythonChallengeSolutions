@@ -10,34 +10,27 @@
 
 # http://www.pythonchallenge.com/pc/hex/lake.html
 
-from base64 import encodebytes
+from auth import read_riddle
+from auth import read_url
 from itertools import chain
 from PIL import Image
-from urllib.request import Request
-from urllib.request import urlopen
 
 import io
 import wave
 
 
-def open_url(url):
-    auth = encodebytes(b"butter:fly").decode().rstrip()
-    headers = {"Authorization": f"Basic {auth}"}
-    return urlopen(Request(url=url, headers=headers)).read()
-
-
-def read_url(url):
-    """Reads URL of the only image in the mission"""
-    riddle_source = open_url(url).decode()
+def get_img_url(url):
+    """Extracts the URL of the only image in the mission"""
+    riddle_source = read_riddle(url)
     return url.replace("lake.html", riddle_source.split('src="')[-1].split('"')[0])
 
 
 def read_waves(url):
     """Reads all the WAVE files there are available under similar URLs"""
-    url, i, waves = url.replace("jpg", "wav"), 1, []
+    i, waves = 1, []
     while True:
         try:
-            payload = open_url(url.replace("1", str(i)))
+            payload = read_url(url.replace("1", str(i)))
             with wave.open(io.BytesIO(payload)) as wave_read:
                 waves.append(wave_read.readframes(wave_read.getnframes()))
             i += 1
@@ -65,7 +58,7 @@ def create_image(waves):
     return new_image
 
 
-url = read_url("http://www.pythonchallenge.com/pc/hex/lake.html")
+url = get_img_url("http://www.pythonchallenge.com/pc/hex/lake.html")
 image_name = "25-lake.png"
-create_image(read_waves(url)).save(image_name)
+create_image(read_waves(url.replace("jpg", "wav"))).save(image_name)
 print("Check", image_name)
