@@ -65,5 +65,5 @@ pyclean:
 
 # run `pyclean` and remove generated files
 clean: pyclean
-	@rm *.gif *.jpg *.p *.pack *.png *.txt *.wav
+	@rm *.gif *.jpg *.p *.pack *.png *.wav *.zip
 .PHONY: clean
