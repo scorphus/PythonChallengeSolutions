@@ -25,5 +25,11 @@ def read_url(url):
 
 
 def read_riddle(url):
-    """Reads URL of the only image in the mission"""
+    """Reads and returns the content of the mission at `url`"""
     return read_url(url).decode()
+
+
+def get_img_url(url):
+    """Extracts the URL of the only image in the mission at `url`"""
+    img_src = read_riddle(url).split('src="')[-1].split('"')[0]
+    return "{}/{}".format(url.rsplit("/", 1)[0], img_src)

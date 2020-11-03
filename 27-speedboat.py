@@ -10,7 +10,7 @@
 
 # http://www.pythonchallenge.com/pc/hex/speedboat.html
 
-from auth import read_riddle
+from auth import get_img_url
 from auth import read_url
 from io import BytesIO
 from itertools import islice
@@ -19,12 +19,6 @@ from wand.image import Image as WandImage
 
 import bz2
 import keyword
-
-
-def get_img_url(url):
-    """Extracts the URL of the only image in the mission"""
-    img_src = read_riddle(url).split('src="')[-1].split('"')[0]
-    return url.replace("speedboat.html", img_src)
 
 
 def get_pixel_values(url):

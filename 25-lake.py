@@ -10,19 +10,13 @@
 
 # http://www.pythonchallenge.com/pc/hex/lake.html
 
-from auth import read_riddle
+from auth import get_img_url
 from auth import read_url
 from itertools import chain
 from PIL import Image
 
 import io
 import wave
-
-
-def get_img_url(url):
-    """Extracts the URL of the only image in the mission"""
-    riddle_source = read_riddle(url)
-    return url.replace("lake.html", riddle_source.split('src="')[-1].split('"')[0])
 
 
 def read_waves(url):
