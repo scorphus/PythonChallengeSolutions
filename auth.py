@@ -14,8 +14,19 @@ from urllib.request import Request
 from urllib.request import urlopen
 
 
+credentials = {
+    "http://www.pythonchallenge.com/pc/hex": b"butter:fly",
+    "http://www.pythonchallenge.com/pc/ring": b"repeat:switch",
+}
+
+
+def get_credentials(url):
+    base_url = url.rsplit("/", 1)[0]
+    return credentials[base_url]
+
+
 def open_url(url):
-    auth = encodebytes(b"butter:fly").decode().rstrip()
+    auth = encodebytes(get_credentials(url)).decode().rstrip()
     headers = {"Authorization": f"Basic {auth}"}
     return urlopen(Request(url=url, headers=headers))
 
