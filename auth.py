@@ -49,3 +49,7 @@ def get_img_url(url):
 
 def get_longest_line(url):
     return max(read_riddle(url).splitlines(), key=len)
+
+
+def get_nth_comment(url, n):
+    return read_riddle(url).split("<!--", n)[n].split("-->", 1)[0]

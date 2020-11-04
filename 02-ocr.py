@@ -10,17 +10,10 @@
 
 # http://www.pythonchallenge.com/pc/def/ocr.html
 
-from collections import defaultdict
-from urllib.request import urlopen
+from auth import get_nth_comment
+from collections import Counter
 
 
-url = "http://www.pythonchallenge.com/pc/def/ocr.html"
-page_source = urlopen(url).read().decode().strip()
-page_data = page_source.split("<!--")[2].split("-->")[0]
-
-counter = defaultdict(int)
-for char in page_data:
-    counter[char] += 1
-
-chars = sorted(counter, key=counter.get)
-print("".join(iter(lambda: chars.pop(0), "\n")))
+riddle = get_nth_comment("http://www.pythonchallenge.com/pc/def/ocr.html", 2)
+counter = Counter(riddle)
+print("".join(filter(lambda key: counter[key] == 1, counter)))
