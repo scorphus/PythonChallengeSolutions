@@ -11,26 +11,10 @@
 # http://www.pythonchallenge.com/pc/def/linkedlist.html
 
 from auth import read_riddle
-
-import pickle
-
-
-def read_cache(file_path):
-    try:
-        with open(file_path, "rb") as fd:
-            return pickle.load(fd)
-    except IOError:
-        return {}
+from cache import cached
 
 
-def write_cache(file_path, cache):
-    try:
-        with open(file_path, "wb") as fd:
-            pickle.dump(cache, fd)
-    except IOError:
-        pass
-
-
+@cached("04-linkedlist.cache")
 def unravel_riddle(url, cache):
     """Follows the riddle leads until the end to ultimately unravel it"""
     curr = 12345
@@ -57,12 +41,4 @@ def unravel_riddle(url, cache):
 url = "http://www.pythonchallenge.com/pc/def/linkedlist.html"
 url_base = url.rsplit("/", 1)[0]
 new_path = read_riddle(url).rstrip()
-
-cache_file = "04-linkedlist-cache.p"
-cache = read_cache(cache_file)
-cache_len = len(cache)
-
-print(unravel_riddle(f"{url_base}/{new_path}", cache))
-
-if len(cache) > cache_len:
-    write_cache(cache_file, cache)
+print(unravel_riddle(f"{url_base}/{new_path}"))
