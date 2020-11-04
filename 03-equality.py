@@ -10,14 +10,12 @@
 
 # http://www.pythonchallenge.com/pc/def/equality.html
 
-from urllib.request import urlopen
+from auth import get_nth_comment
 
 import re
 
 
-url = "http://www.pythonchallenge.com/pc/def/equality.html"
-page_source = urlopen(url).read().decode().strip()
-page_data = page_source.split("<!--")[1].split("-->")[0]
-content = "".join(page_data.split("\n"))
+riddle = get_nth_comment("http://www.pythonchallenge.com/pc/def/equality.html", 1)
+content = "".join(riddle.splitlines())
 pattern = re.compile(r"[a-z][A-Z]{3}([a-z])[A-Z]{3}[a-z]")
 print("".join(pattern.findall(content)))
