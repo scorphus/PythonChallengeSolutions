@@ -10,19 +10,15 @@
 
 # http://www.pythonchallenge.com/pc/def/integrity.html
 
-from urllib.request import urlopen
+from auth import read_url
 
 import bz2
 
 
 url = "http://www.pythonchallenge.com/pc/def/integrity.html"
-page_source = urlopen(url).read().decode("unicode_escape").encode("latin1")
-page_data = page_source.split(b"<!--")[1].split(b"-->")[0]
+page_source = read_url(url).decode("unicode_escape").encode("latin1")
+page_data = page_source.split(b"<!--", 1)[1].split(b"-->", 1)[0]
 
 _, un, _, pw, _ = page_data.split(b"'")
-
-dec_un = bz2.decompress(un)
-dec_pw = bz2.decompress(pw)
-
-print(f"user: {dec_un.decode()}")
-print(f"pass: {dec_pw.decode()}")
+print(f"user: {bz2.decompress(un).decode()}")
+print(f"pass: {bz2.decompress(pw).decode()}")
