@@ -29,6 +29,14 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pip-
             ${{ runner.os }}-
+      - name: Cache cache files
+        uses: actions/cache@v2
+        with:
+          path: "*.cache"
+          key: ${{ runner.os }}-cache-${{ hashFiles('*.cache') }}
+          restore-keys: |
+            ${{ runner.os }}-cache-
+            ${{ runner.os }}-
       - name: setup-ci
         run: make setup-ci
       - name: isort
