@@ -8,55 +8,61 @@
 # https://opensource.org/licenses/BSD-3-Clause
 # Copyright (c) 2018-2020, Pablo S. Blum de Aguiar <scorphus@gmail.com>
 
-# http://www.pythonchallenge.com/pc/def/linkedlist.php
-# http://www.pythonchallenge.com/pc/def/linkedlist.php?nothing=12345
+# http://www.pythonchallenge.com/pc/def/linkedlist.html
 
-from urllib.request import urlopen
+from auth import read_riddle
 
 import pickle
-import sys
 
 
-cache_file_path = "04-linkedlist-cache.p"
-
-try:
-    with open(cache_file_path, "rb") as cache_file:
-        cache = pickle.load(cache_file)
-except IOError:
-    cache = dict()
-
-cache_len = len(cache)
-
-url = "http://www.pythonchallenge.com/pc/def/linkedlist.php?nothing={}"
-curr = 12345
-
-for _ in range(400):
-    sys.stderr.write(".")
-    sys.stderr.flush()
+def read_cache(file_path):
     try:
-        if curr in cache:
-            riddle = cache[curr]
-        else:
-            riddle = cache[curr] = urlopen(url.format(curr)).read().decode()
-    except KeyboardInterrupt:
-        sys.exit(0)
-    except Exception as e:
-        sys.stderr.write(f"\nBang! {e} ({curr})")
-        sys.exit(1)
-    try:
-        next_ = int(riddle.split(" ")[-1])
-    except ValueError:
-        if riddle == "Yes. Divide by two and keep going.":
-            next_ = curr // 2
-        else:
-            break
-    curr = next_
+        with open(file_path, "rb") as fd:
+            return pickle.load(fd)
+    except IOError:
+        return {}
 
-if len(cache) > cache_len:
+
+def write_cache(file_path, cache):
     try:
-        with open(cache_file_path, "wb") as cache_file:
-            pickle.dump(cache, cache_file)
+        with open(file_path, "wb") as fd:
+            pickle.dump(cache, fd)
     except IOError:
         pass
 
-sys.stderr.write(f"{riddle}\n")
+
+def unravel_riddle(url, cache):
+    """Follows the riddle leads until the end to ultimately unravel it"""
+    curr = 12345
+    while True:
+        try:
+            if curr not in cache:
+                cache[curr] = read_riddle(f"{url}?nothing={curr}")
+            riddle = cache[curr]
+        except KeyboardInterrupt:
+            exit(0)
+        except Exception as e:
+            print(f"Bang! {e} ({curr})")
+            exit(1)
+        try:
+            next_ = int(riddle.rsplit(maxsplit=1)[-1])
+        except ValueError:
+            if riddle == "Yes. Divide by two and keep going.":
+                next_ = curr // 2
+            else:
+                return riddle
+        curr = next_
+
+
+url = "http://www.pythonchallenge.com/pc/def/linkedlist.html"
+url_base = url.rsplit("/", 1)[0]
+new_path = read_riddle(url).rstrip()
+
+cache_file = "04-linkedlist-cache.p"
+cache = read_cache(cache_file)
+cache_len = len(cache)
+
+print(unravel_riddle(f"{url_base}/{new_path}", cache))
+
+if len(cache) > cache_len:
+    write_cache(cache_file, cache)
