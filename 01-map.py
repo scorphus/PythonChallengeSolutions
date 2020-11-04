@@ -10,23 +10,23 @@
 
 # http://www.pythonchallenge.com/pc/def/map.html
 
-original = (
-    "g fmnc wms bgblr rpylqjyrc gr zw fylb. rfyrq ufyr amknsrcpq ypc  dmp. "
-    "bmgle gr gl zw fylb gq glcddgagclr ylb rfyr'q ufw rfgq rcvr gq qm jmle. "
-    "sqgle qrpgle.kyicrpylq() gq pcamkkclbcb. lmu ynnjw ml rfc spj."
-)
+from auth import get_longest_line
 
-chr_a = ord("a")
-diff_az = ord("z") + 1 - chr_a
 
-translated = ""
+def translate(phrase, rot):
+    """Translates `phrase` by shifting each character `rot` positions forward"""
+    ord_a = ord("a")
+    diff_az = ord("z") + 1 - ord_a
+    translated = ""
+    for char in phrase:
+        if "a" <= char <= "z":
+            char = chr(((ord(char) - ord_a + rot) % diff_az) + ord_a)
+        translated += char
+    return translated
 
-for c in original:
-    if "a" <= c <= "z":
-        c = chr(((ord(c) - chr_a + 2) % diff_az) + chr_a)
-    translated += c
 
+original = get_longest_line("http://www.pythonchallenge.com/pc/def/map.html")
+translated = translate(original, 2)
+print(original)
 print(translated)
-
-transtab = str.maketrans(original, translated)
-print("map".translate(transtab))
+print("map ->", "map".translate(str.maketrans(original, translated)))

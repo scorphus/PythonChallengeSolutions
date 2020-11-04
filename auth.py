@@ -15,6 +15,7 @@ from urllib.request import urlopen
 
 
 credentials = {
+    "http://www.pythonchallenge.com/pc/def": b"",
     "http://www.pythonchallenge.com/pc/hex": b"butter:fly",
     "http://www.pythonchallenge.com/pc/ring": b"repeat:switch",
 }
@@ -27,7 +28,7 @@ def get_credentials(url):
 
 def open_url(url):
     auth = encodebytes(get_credentials(url)).decode().rstrip()
-    headers = {"Authorization": f"Basic {auth}"}
+    headers = {"Authorization": f"Basic {auth}"} if auth else {}
     return urlopen(Request(url=url, headers=headers))
 
 
@@ -44,3 +45,7 @@ def get_img_url(url):
     """Extracts the URL of the only image in the mission at `url`"""
     img_src = read_riddle(url).split('src="')[-1].split('"')[0]
     return "{}/{}".format(url.rsplit("/", 1)[0], img_src)
+
+
+def get_longest_line(url):
+    return max(read_riddle(url).splitlines(), key=len)
