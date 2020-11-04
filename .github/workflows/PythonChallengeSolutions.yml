@@ -39,12 +39,8 @@ jobs:
             ${{ runner.os }}-
       - name: setup-ci
         run: make setup-ci
-      - name: isort
-        run: make isort
-      - name: black
-        run: make black
-      - name: flake8
-        run: make flake8
+      - name: lint
+        run: make lint
       - name: run
         run: make run
       - name: Upload generated artifacts for the sake of ... fun!
