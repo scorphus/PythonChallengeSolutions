@@ -17,10 +17,10 @@ import pickle
 import sys
 
 
-cache_file = "04-linkedlist-cache.p"
+cache_file_path = "04-linkedlist-cache.p"
 
 try:
-    with open(cache_file, "rb") as cache_file:
+    with open(cache_file_path, "rb") as cache_file:
         cache = pickle.load(cache_file)
 except IOError:
     cache = dict()
@@ -54,7 +54,7 @@ for _ in range(400):
 
 if len(cache) > cache_len:
     try:
-        with open(cache_file, "wb") as cache_file:
+        with open(cache_file_path, "wb") as cache_file:
             pickle.dump(cache, cache_file)
     except IOError:
         pass
