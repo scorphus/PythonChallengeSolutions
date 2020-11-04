@@ -10,6 +10,7 @@
 # http://www.pythonchallenge.com/
 
 from base64 import encodebytes
+from cache import autocached
 from urllib.request import Request
 from urllib.request import urlopen
 
@@ -32,6 +33,7 @@ def open_url(url):
     return urlopen(Request(url=url, headers=headers))
 
 
+@autocached("read_url.cache")
 def read_url(url):
     return open_url(url).read()
 

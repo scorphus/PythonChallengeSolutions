@@ -45,3 +45,23 @@ def cached(file_path):
         return wrapper
 
     return decorator
+
+
+def autocached(file_path):
+    """Decorates a function providing a file-based cache that is read and
+    updated on every run. The function result is automatically cached and
+    returned"""
+
+    def decorator(f):
+        @wraps(f)
+        def wrapper(*args, **kwargs):
+            cache = read_cache(file_path)
+            key = args[0]
+            if key not in cache:
+                cache[key] = f(*args, **kwargs)
+            write_cache(file_path, cache)
+            return cache[key]
+
+        return wrapper
+
+    return decorator
