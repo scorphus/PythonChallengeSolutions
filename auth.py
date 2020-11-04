@@ -17,6 +17,7 @@ from urllib.request import urlopen
 
 credentials = {
     "http://www.pythonchallenge.com/pc/def": b"",
+    "http://www.pythonchallenge.com/pc/return": b"huge:file",
     "http://www.pythonchallenge.com/pc/hex": b"butter:fly",
     "http://www.pythonchallenge.com/pc/ring": b"repeat:switch",
 }

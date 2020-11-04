@@ -10,30 +10,43 @@
 
 # http://www.pythonchallenge.com/pc/return/good.html
 
-from base64 import encodebytes
+from auth import get_nth_comment
 from PIL import Image
 from PIL import ImageDraw
-from urllib.request import Request
-from urllib.request import urlopen
+
+
+def extract_lines(riddle):
+    """Extracts the first and second lines from the riddle"""
+    _, *lines, _ = riddle.split("\n\n")
+    lines = [line.rsplit(":", 1)[1] for line in lines]
+    return [[int(n) for n in line.split(",")] for line in lines]
+
+
+def gen_image(first, second, fraction):
+    """Generates an image with the lines and returns a fraction of it"""
+    size = max(first + second) + fraction + 1
+    image = Image.new("L", (size, size))
+    draw = ImageDraw.Draw(image)
+    draw.line(list(zip(first[::2], first[1::2])), 255)
+    draw.line(list(zip(second[::2], second[1::2])), 255)
+    return image.resize((size // fraction, size // fraction))
+
+
+def image_to_text(image, threshold):
+    """Converts an image to text, lighting pixel greater than a threshold"""
+    text = ""
+    for y in range(image.size[1]):
+        for x in range(image.size[0]):
+            if image.getpixel((x, y)) > threshold:
+                text += "^^"
+            else:
+                text += "  "
+        text += "\n"
+    return text.rstrip()
 
 
 url = "http://www.pythonchallenge.com/pc/return/good.html"
-auth = encodebytes(b"huge:file").decode().rstrip()
-headers = {"Authorization": f"Basic {auth}"}
-page_source = urlopen(Request(url=url, headers=headers)).read().decode()
-page_data = page_source.split("<!--")[2].split("-->")[0]
-
-first, second = [
-    [int(n) for n in s.split(",")]
-    for s in [p.split(":")[-1].rstrip() for p in page_data.split("\n\n") if ":" in p]
-]
-
-size = [max(first + second) + 1] * 2
-image = Image.new("1", size)
-
-draw = ImageDraw.Draw(image)
-draw.line(list(zip(first[::2], first[1::2])), 1, 2)
-draw.line(list(zip(second[::2], second[1::2])), 1, 2)
-
-image.save("09-good.png", "PNG")
-print("Open 09-good.png")
+first, second = extract_lines(get_nth_comment(url, 2))
+image = gen_image(first, second, 6)
+text = image_to_text(image, 15)
+print("\n".join(filter(str.strip, text.splitlines())))
