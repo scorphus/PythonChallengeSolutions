@@ -11,40 +11,36 @@
 # http://www.pythonchallenge.com/pc/def/channel.html
 # Source mentions zip
 
+from auth import get_nth_comment
+from auth import read_url
 from io import BytesIO
-from urllib.request import urlopen
 from zipfile import ZipFile
 
-import sys
 
-
-url = "http://www.pythonchallenge.com/pc/def/channel.zip"
-zip_content = urlopen(url).read()
-
-with ZipFile(BytesIO(zip_content)) as channel:
-    with channel.open("readme.txt") as readme:
-        for line in readme.readlines():
-            if "start" in line.decode():
-                current = line.decode().strip().split(" ")[-1]
-                break
-        else:
-            raise RuntimeError("Could not find start")
-    comments = ""
-    while True:
-        print(".", end="", flush=True)
-        comments += channel.getinfo(current + ".txt").comment.decode()
-        try:
-            with channel.open(current + ".txt") as current_fp:
-                riddle = current_fp.read().decode()
-                if "Next nothing is" not in riddle:
+def read_comments_from_zip(url):
+    with ZipFile(BytesIO(read_url(url))) as channel:
+        with channel.open(channel.namelist()[-1]) as readme:
+            for line in readme.readlines():
+                if "start" in line.decode():
+                    curr = line.decode().strip().rsplit(maxsplit=1)[-1]
                     break
-                current = riddle.split(" ")[-1]
-        except KeyError:
-            break
-        except KeyboardInterrupt:
-            sys.exit(0)
-        except Exception as e:
-            print(f"Bang! {e} ({current})")
-            sys.exit(1)
+            else:
+                raise RuntimeError("Could not find start")
+        comments = ""
+        while True:
+            try:
+                comments += channel.getinfo(f"{curr}.txt").comment.decode()
+                with channel.open(f"{curr}.txt") as current_fp:
+                    curr = current_fp.read().decode().rsplit(maxsplit=1)[-1]
+            except KeyError:
+                return comments
+            except KeyboardInterrupt:
+                exit(0)
+            except Exception as e:
+                print(f"Bang! {e} ({curr})")
+                exit(1)
 
-print(f"{riddle}\nThe comments form:\n\n{comments}")
+
+url = "http://www.pythonchallenge.com/pc/def/channel.html"
+zip_url = url.replace("html", get_nth_comment(url, 1).split()[-1])
+print(read_comments_from_zip(zip_url))
