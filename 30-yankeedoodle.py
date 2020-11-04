@@ -10,7 +10,7 @@
 
 # http://www.pythonchallenge.com/pc/ring/yankeedoodle.html
 
-from auth import get_img_url
+from auth import get_last_src_url
 from auth import read_riddle
 from itertools import chain
 from math import sqrt
@@ -18,7 +18,7 @@ from math import sqrt
 
 def read_csv_cells(url):
     """Read the cells of the CSV mentioned in the riddle"""
-    csv_url = get_img_url(url).replace("jpg", "csv")
+    csv_url = get_last_src_url(url).replace("jpg", "csv")
     rows = (line.rstrip(",").split(", ") for line in read_riddle(csv_url).splitlines())
     return list(chain.from_iterable(rows))
 

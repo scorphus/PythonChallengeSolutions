@@ -11,12 +11,12 @@
 # http://www.pythonchallenge.com/pc/def/peak.html
 # Source mentions banner.p
 
-from urllib.request import urlopen
+from auth import get_last_src_url
+from auth import read_url
 
 import pickle
 
 
-url = "http://www.pythonchallenge.com/pc/def/banner.p"
-
-for row in pickle.load(urlopen(url)):
+url = "http://www.pythonchallenge.com/pc/def/peak.html"
+for row in pickle.loads(read_url(get_last_src_url(url))):
     print("".join(char * times for char, times in row))

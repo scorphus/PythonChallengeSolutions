@@ -10,7 +10,7 @@
 
 # http://www.pythonchallenge.com/pc/hex/speedboat.html
 
-from auth import get_img_url
+from auth import get_last_src_url
 from auth import read_url
 from io import BytesIO
 from itertools import islice
@@ -23,7 +23,7 @@ import keyword
 
 def get_pixel_values(url):
     """Gets pixel values using PIL and Wand — does PIL get them wrong? 🤔"""
-    img_url = get_img_url(url).replace("jpg", "gif")
+    img_url = get_last_src_url(url).replace("jpg", "gif")
     img_content = BytesIO(read_url(img_url))
     pil_pixels = PILImage.open(img_content).tobytes()
     img_content.seek(0)

@@ -43,8 +43,8 @@ def read_riddle(url):
     return read_url(url).decode()
 
 
-def get_img_url(url):
-    """Extracts the URL of the only image in the mission at `url`"""
+def get_last_src_url(url):
+    """Extracts the URL of the last `src` attribute in the mission at `url`"""
     img_src = read_riddle(url).split('src="')[-1].split('"')[0]
     return "{}/{}".format(url.rsplit("/", 1)[0], img_src)
 

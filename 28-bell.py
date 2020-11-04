@@ -10,13 +10,13 @@
 
 # http://www.pythonchallenge.com/pc/ring/bell.html
 
-from auth import get_img_url
+from auth import get_last_src_url
 from auth import open_url
 from itertools import islice
 from PIL import Image as Image
 
 
-img_url = get_img_url("http://www.pythonchallenge.com/pc/ring/bell.html")
+img_url = get_last_src_url("http://www.pythonchallenge.com/pc/ring/bell.html")
 greens = islice(Image.open(open_url(img_url)).tobytes(), 1, None, 3)
 for curr, prev in zip(greens, greens):
     if abs(curr - prev) != 42:  # the ultimate answer, oh!!! Boring mission 😒

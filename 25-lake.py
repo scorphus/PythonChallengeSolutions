@@ -10,7 +10,7 @@
 
 # http://www.pythonchallenge.com/pc/hex/lake.html
 
-from auth import get_img_url
+from auth import get_last_src_url
 from auth import read_url
 from itertools import chain
 from PIL import Image
@@ -52,7 +52,7 @@ def create_image(waves):
     return new_image
 
 
-url = get_img_url("http://www.pythonchallenge.com/pc/hex/lake.html")
+url = get_last_src_url("http://www.pythonchallenge.com/pc/hex/lake.html")
 image_name = "25-lake.png"
 create_image(read_waves(url.replace("jpg", "wav"))).save(image_name)
 print("Check", image_name)
