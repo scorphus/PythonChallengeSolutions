@@ -10,24 +10,19 @@
 
 # http://www.pythonchallenge.com/pc/return/5808.html
 
-from base64 import encodebytes
+from auth import get_last_src_url
+from auth import read_url
+from io import BytesIO
 from PIL import Image
-from urllib.request import Request
-from urllib.request import urlopen
 
 
-url = "http://www.pythonchallenge.com/pc/return/cave.jpg"
-auth = encodebytes(b"huge:file").decode().rstrip()
-headers = {"Authorization": f"Basic {auth}"}
-
-image = Image.open(urlopen(Request(url=url, headers=headers)))
-hidden = Image.new(image.mode, [d // 2 for d in image.size])
-
-for x in range(image.width):
-    for y in range(image.height):
+img_url = get_last_src_url("http://www.pythonchallenge.com/pc/return/5808.html")
+img = Image.open(BytesIO(read_url(img_url))).convert("L")
+for y in range(0, 2 * img.height // 5, 4):
+    for x in range(img.width // 2, img.width, 4):
         if (x + y) % 2 == 0:
-            pixel = image.getpixel((x, y))
-            hidden.putpixel((x // 2, y // 2), pixel)
-
-hidden.save("11-hidden.jpg", "JPEG")
-print("Open 11-hidden.jpg")
+            if img.getpixel((x, y)) > 14:
+                print("##", end="")
+            else:
+                print("  ", end="")
+    print()
