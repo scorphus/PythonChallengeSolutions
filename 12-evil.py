@@ -9,35 +9,53 @@
 # Copyright (c) 2018-2020, Pablo S. Blum de Aguiar <scorphus@gmail.com>
 
 # http://www.pythonchallenge.com/pc/return/evil.html
-# Source includes evil1.jpg
-# Try evil2.jpg which then mentions evil2.gfx
 
-from base64 import encodebytes
-from urllib.request import Request
-from urllib.request import urlopen
-
-
-def identify(image, header_size=10):
-    known_formats = [("FIF", "jpg"), ("GIF", "gif"), ("PNG", "png")]
-    header = image[:header_size]
-    for fmt, ext in known_formats:
-        if fmt in f"{header}":
-            return ext
+from auth import get_last_src_url
+from auth import read_url
+from io import BytesIO
+from PIL import Image
+from PIL import ImageFile
+from PIL import UnidentifiedImageError
 
 
-url = "http://www.pythonchallenge.com/pc/return/evil2.gfx"
-auth = encodebytes(b"huge:file").decode().rstrip()
-headers = {"Authorization": f"Basic {auth}"}
-req = urlopen(Request(url=url, headers=headers))
-gfx = req.read()
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 
-images = [b""] * 5
-for i, n in enumerate(gfx):
-    images[i % 5] += bytes([n])
 
-for i, image in enumerate(images):
-    ext = identify(image)
-    with open(f"12-evil2-{i+1}.{ext}", "wb") as image_file:
-        image_file.write(image)
+def image_to_text(image, threshold=10, skip=6):
+    """Converts an image to text, lighting pixel greater than a threshold and
+    skiping some rows/cols"""
+    image, text = image.crop(image.getbbox()).convert("L"), ""
+    for y in range(0, image.height, skip):
+        for x in range(0, image.width, skip):
+            if image.getpixel((x, y)) > threshold:
+                text += "##"
+            else:
+                text += "  "
+        text += "\n"
+    return "\n".join(filter(str.strip, text.splitlines()))
 
-print("Open 12-evil2-*")
+
+def get_next_jpg_images(jpg_url, from_to):
+    """Gets next images by changing the number in the URL"""
+    for i in range(*from_to):
+        jpg_content = read_url(jpg_url.replace("1", f"{i}"))
+        try:
+            jpg = Image.open(BytesIO(jpg_content))
+            yield image_to_text(jpg, 10, 8)
+        except UnidentifiedImageError:
+            yield jpg_content.decode()
+
+
+def get_images_in_gfx(jpg_url):
+    """Gets the 5 images, distributed in noncontiguous 5*n indexes"""
+    gfx_url = jpg_url.replace("1", "2").replace("jpg", "gfx")
+    gfx = read_url(gfx_url)
+    for i in range(5):
+        img = Image.open(BytesIO(bytes(gfx[i::5])))
+        yield image_to_text(img)
+
+
+url = "http://www.pythonchallenge.com/pc/return/evil.html"
+jpg_url = get_last_src_url(url)
+print("\n".join(get_next_jpg_images(jpg_url, (2, 5))))
+print("\n".join(get_images_in_gfx(jpg_url)))
