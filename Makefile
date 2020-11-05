@@ -42,8 +42,8 @@ lint: isort black flake8
 
 # run all missions
 run:
-	@for mission in *.py; do \
-		echo "==> Running $$mission..."; \
+	@for mission in *-*.py; do \
+		echo "\n\n⚡️⚡️⚡️ Running $$mission ⚡️⚡️⚡️"; \
 		python $$mission; \
 	done;
 .PHONY: run
