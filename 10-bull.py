@@ -10,30 +10,28 @@
 
 # http://www.pythonchallenge.com/pc/return/bull.html
 
-from base64 import encodebytes
-from urllib.request import Request
-from urllib.request import urlopen
+from auth import read_riddle
 
 
-def describe(n):
-    n_str = f"{n}"
-    desc = ""
-    curr, count = n_str[0], 0
-    for digit in n_str:
-        if digit != curr:
-            desc = f"{desc}{count}{curr}"
-            curr, count = digit, 0
-        count += 1
-    return int(f"{desc}{count}{curr}")
+def look_and_say(digits):
+    """Describes a digit as in a look-and-say manner"""
+    desc = [1, digits[0]]
+    for digit in digits[1:]:
+        if desc[-1] == digit:
+            desc[-2] += 1
+        else:
+            desc.extend([1, digit])
+    return desc
 
 
-url = "http://www.pythonchallenge.com/pc/return/sequence.txt"
-auth = encodebytes(b"huge:file").decode().rstrip()
-headers = {"Authorization": f"Basic {auth}"}
-text_data = urlopen(Request(url=url, headers=headers)).read().decode()
-a = [int(n.strip()) for n in text_data.split("[")[1].split(",")[:-1]]
+def look_and_say_nth(n):
+    """Generates the nth element of the look-and-say sequence"""
+    digits = [1]
+    for _ in range(n):
+        digits = look_and_say(digits)
+    return digits
 
-for i in range(len(a), 31):
-    a.append(describe(a[i - 1]))
 
-print("len(a[30]) =", len(str(a[30])))
+url = "http://www.pythonchallenge.com/pc/return/bull.html"
+n = int(read_riddle(url).rsplit("[", 1)[1].split("]", 1)[0])
+print(len(look_and_say_nth(n)))

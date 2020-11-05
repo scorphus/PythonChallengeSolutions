@@ -44,10 +44,20 @@ def read_riddle(url):
     return read_url(url).decode()
 
 
+def get_last_attr_url(url, attr):
+    """Extracts the URL of the last `attr` attribute in the mission at `url`"""
+    img_src = read_riddle(url).split(f'{attr}="')[-1].split('"')[0]
+    return "{}/{}".format(url.rsplit("/", 1)[0], img_src)
+
+
 def get_last_src_url(url):
     """Extracts the URL of the last `src` attribute in the mission at `url`"""
-    img_src = read_riddle(url).split('src="')[-1].split('"')[0]
-    return "{}/{}".format(url.rsplit("/", 1)[0], img_src)
+    return get_last_attr_url(url, "src")
+
+
+def get_last_href_url(url):
+    """Extracts the URL of the last `href` attribute in the mission at `url`"""
+    return get_last_attr_url(url, "href")
 
 
 def get_longest_line(url):
