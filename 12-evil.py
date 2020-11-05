@@ -57,5 +57,7 @@ def get_images_in_gfx(jpg_url):
 
 url = "http://www.pythonchallenge.com/pc/return/evil.html"
 jpg_url = get_last_src_url(url)
-print("\n".join(get_next_jpg_images(jpg_url, (2, 5))))
-print("\n".join(get_images_in_gfx(jpg_url)))
+
+if __name__ == "__main__":
+    print("\n".join(get_next_jpg_images(jpg_url, (2, 5))))
+    print("\n".join(get_images_in_gfx(jpg_url)))

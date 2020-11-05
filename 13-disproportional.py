@@ -10,11 +10,16 @@
 
 # http://www.pythonchallenge.com/pc/return/disproportional.html
 
+from auth import get_last_href_url
 from xmlrpc.client import ServerProxy
 
 
-url = "http://www.pythonchallenge.com/pc/phonebook.php"
+def get_evil():
+    """Reads part of last mission's riddle; did you miss that???"""
+    evil = __import__("12-evil")
+    return next(evil.get_next_jpg_images(evil.jpg_url, (4, 5))).split()[0]
 
-with ServerProxy(url) as proxy:
-    print("system.listMethods(): {}".format(proxy.system.listMethods()))
-    print("phone('Bert'): {}".format(proxy.phone("Bert")))
+
+url = "http://www.pythonchallenge.com/pc/return/disproportional.html"
+with ServerProxy(get_last_href_url(url)) as proxy:
+    print(proxy.phone(get_evil()))
