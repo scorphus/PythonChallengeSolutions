@@ -25,16 +25,18 @@ jobs:
           path: |
             ${{ env.pythonLocation}}/lib/*/site-packages/*
             ${{ env.pythonLocation}}/bin/*
-          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ hashFiles('setup.py') }}
           restore-keys: |
+            ${{ runner.os }}-pip-${{ matrix.python-version }}-
             ${{ runner.os }}-pip-
             ${{ runner.os }}-
       - name: Cache cache files
         uses: actions/cache@v2
         with:
           path: "*.cache"
-          key: ${{ runner.os }}-cache-${{ hashFiles('*.cache') }}
+          key: ${{ runner.os }}-cache-${{ matrix.python-version }}-${{ hashFiles('setup.py') }}
           restore-keys: |
+            ${{ runner.os }}-cache-${{ matrix.python-version }}-
             ${{ runner.os }}-cache-
             ${{ runner.os }}-
       - name: setup-ci
