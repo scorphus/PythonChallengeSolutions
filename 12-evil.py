@@ -12,6 +12,7 @@
 
 from auth import get_last_src_url
 from auth import read_url
+from image import image_to_text
 from io import BytesIO
 from PIL import Image
 from PIL import ImageFile
@@ -19,20 +20,6 @@ from PIL import UnidentifiedImageError
 
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
-
-
-def image_to_text(image, threshold=10, skip=6):
-    """Converts an image to text, lighting pixel greater than a threshold and
-    skiping some rows/cols"""
-    image, text = image.crop(image.getbbox()).convert("L"), ""
-    for y in range(0, image.height, skip):
-        for x in range(0, image.width, skip):
-            if image.getpixel((x, y)) > threshold:
-                text += "##"
-            else:
-                text += "  "
-        text += "\n"
-    return "\n".join(filter(str.strip, text.splitlines()))
 
 
 def get_next_jpg_images(jpg_url, from_to):
