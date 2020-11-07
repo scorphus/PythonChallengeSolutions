@@ -27,20 +27,20 @@ def get_credentials(url):
     return credentials.get(base_url, b"")
 
 
-def open_url(url):
+def open_url(url, headers={}):
     auth = encodebytes(get_credentials(url)).decode().rstrip()
-    headers = {"Authorization": f"Basic {auth}"} if auth else {}
+    headers = {"Authorization": f"Basic {auth}", **headers} if auth else headers
     return urlopen(Request(url=url, headers=headers))
 
 
 @autocached("read_url.cache")
-def read_url(url):
-    return open_url(url).read()
+def read_url(url, headers={}):
+    return open_url(url, headers).read()
 
 
-def read_riddle(url):
+def read_riddle(url, headers={}):
     """Reads and returns the content of the mission at `url`"""
-    return read_url(url).decode()
+    return read_url(url, headers).decode()
 
 
 def get_last_attr_url(url, attr):
