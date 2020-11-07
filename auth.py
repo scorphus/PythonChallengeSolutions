@@ -16,7 +16,6 @@ from urllib.request import urlopen
 
 
 credentials = {
-    "http://www.pythonchallenge.com/pc/def": b"",
     "http://www.pythonchallenge.com/pc/return": b"huge:file",
     "http://www.pythonchallenge.com/pc/hex": b"butter:fly",
     "http://www.pythonchallenge.com/pc/ring": b"repeat:switch",
@@ -25,7 +24,7 @@ credentials = {
 
 def get_credentials(url):
     base_url = url.rsplit("/", 1)[0]
-    return credentials[base_url]
+    return credentials.get(base_url, b"")
 
 
 def open_url(url):
