@@ -11,6 +11,7 @@
 
 from functools import wraps
 
+import hashlib
 import inspect
 import pickle
 
@@ -63,6 +64,14 @@ def cached(file_path):
     return decorator
 
 
+def _get_cache_key(*args, **kwargs):
+    if not args and not kwargs:
+        return None
+    if args and not kwargs and len(args) == 1:
+        return args[0]
+    return hashlib.sha1(pickle.dumps((args, kwargs))).hexdigest()
+
+
 @_file_cacher
 def autocached(file_path):
     """Decorates a function providing a file-based cache that is read and
@@ -73,7 +82,7 @@ def autocached(file_path):
         @wraps(f)
         def wrapper(*args, **kwargs):
             cache = read_cache(file_path)
-            key = args[0]
+            key = _get_cache_key(*args, **kwargs) or f.__name__
             if key not in cache:
                 cache[key] = f(*args, **kwargs)
             write_cache(file_path, cache)
