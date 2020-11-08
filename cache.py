@@ -11,6 +11,7 @@
 
 from functools import wraps
 
+import inspect
 import pickle
 
 
@@ -30,6 +31,21 @@ def write_cache(file_path, cache):
         pass
 
 
+def _file_cacher(cacher):
+    """Decorates other decorators defined below providing them with a file path
+    regardles of how they're used"""
+
+    @wraps(cacher)
+    def wrapper(file_path):
+        if inspect.isfunction(file_path):
+            func_file_path = f"{inspect.getfile(file_path).rsplit('.', 1)[0]}.cache"
+            return cacher(func_file_path)(file_path)
+        return cacher(file_path)
+
+    return wrapper
+
+
+@_file_cacher
 def cached(file_path):
     """Decorates a function providing a file-based cache that is read and
     updated on every run"""
@@ -47,6 +63,7 @@ def cached(file_path):
     return decorator
 
 
+@_file_cacher
 def autocached(file_path):
     """Decorates a function providing a file-based cache that is read and
     updated on every run. The function result is automatically cached and
