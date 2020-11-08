@@ -41,4 +41,6 @@ def unravel_riddle(url, cache):
 url = "http://www.pythonchallenge.com/pc/def/linkedlist.html"
 url_base = url.rsplit("/", 1)[0]
 new_path = read_riddle(url).rstrip()
-print(unravel_riddle(f"{url_base}/{new_path}"))
+
+if __name__ == "__main__":
+    print(unravel_riddle(f"{url_base}/{new_path}"))

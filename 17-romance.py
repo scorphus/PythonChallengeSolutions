@@ -8,61 +8,91 @@
 # https://opensource.org/licenses/BSD-3-Clause
 # Copyright (c) 2018-2020, Pablo S. Blum de Aguiar <scorphus@gmail.com>
 
-# http://www.pythonchallenge.com/pc/def/linkedlist.php
-# http://www.pythonchallenge.com/pc/def/linkedlist.php?nothing=12345
+# http://www.pythonchallenge.com/pc/return/romance.html
 
-from contextlib import suppress
+from auth import read_riddle
+from cache import autocached
+from cache import cached
 from http.cookiejar import CookieJar
 from urllib.parse import unquote_to_bytes
 from urllib.request import build_opener
 from urllib.request import HTTPCookieProcessor
-from urllib.request import Request
-from urllib.request import urlopen
 from xmlrpc.client import ServerProxy
 
 import bz2
 import sys
 
 
-url = "http://www.pythonchallenge.com/pc/def/linkedlist.php?busynothing={}"
-curr = 12345
+@autocached
+def discover_url():
+    """Retrieves the query string param name from the first cookie set by
+    mission 04's URL and returns a formatting string with URL and the param"""
+    cookie_jar = CookieJar()
+    linkedlist = __import__("04-linkedlist")
+    url = f"{linkedlist.url_base}/{linkedlist.new_path}"
+    build_opener(HTTPCookieProcessor(cookie_jar)).open(url)
+    the_one_cookie = list(cookie_jar)[0].value
+    qs_param = the_one_cookie.rstrip(".").rsplit("+", 1)[-1]
+    return f"{url}?{qs_param}={{}}"
 
-msg = ""
-cookie_jar = CookieJar()
-url_opener = build_opener(HTTPCookieProcessor(cookie_jar))
 
-try:
-    with open("17-cookie-cache.txt", "r") as msg_file:
-        msg = msg_file.read()
-except IOError:
-    for _ in range(400):
-        print(".", end="", flush=True)
-        try:
-            resp = url_opener.open(url.format(curr), timeout=3)
-            riddle = resp.read().decode()
-            cookie = list(cookie_jar)[0]
-            msg += cookie.value
-        except KeyboardInterrupt:
-            sys.exit(0)
-        except Exception as e:
-            print(f"\nBang! {e} ({curr})")
-            sys.exit(1)
-        try:
-            next_ = int(riddle.split(" ")[-1])
-        except ValueError:
-            break
-        curr = next_
-    with suppress(IOError):
-        with open("17-cookie-cache.txt", "w") as msg_file:
-            msg_file.write(msg)
+@cached
+def unravel_message(url, cache):
+    """Follows the riddle until the end — as in mission 04 — but this time
+    looking at the first cookie. Then returns the message decompressed."""
+    curr = 12345
+    cookie_jar = CookieJar()
+    url_opener = build_opener(HTTPCookieProcessor(cookie_jar))
+    msg = cache.get("msg", "")
+    if not msg:
+        while True:
+            try:
+                resp = url_opener.open(url.format(curr), timeout=3)
+                riddle = resp.read().decode()
+                cookie = list(cookie_jar)[0]
+                msg += cookie.value
+            except KeyboardInterrupt:
+                sys.exit(0)
+            except Exception as e:
+                print(f"\nBang! {e} ({curr})")
+                sys.exit(1)
+            try:
+                next_ = int(riddle.split(" ")[-1])
+            except ValueError:
+                break
+            curr = next_
+        cache["msg"] = msg
+    return bz2.decompress(unquote_to_bytes(msg.replace("+", " "))).decode()
 
-dec_msg = bz2.decompress(unquote_to_bytes(msg.replace("+", " "))).decode()
-print(dec_msg)
 
-url = "http://www.pythonchallenge.com/pc/phonebook.php"
-with ServerProxy(url) as proxy:
-    print("phone('Leopold'): {}".format(proxy.phone("Leopold")))
+@autocached
+def proxy_phone(callee):
+    """Uses mission 13's capabilities to phone"""
+    disproportional = __import__("13-disproportional")
+    with ServerProxy(disproportional.proxy_url) as proxy:
+        return proxy.phone(callee).rsplit("-", 1)[-1].lower()
 
-url = "http://www.pythonchallenge.com/pc/stuff/violin.php"
-info = dec_msg.split('"')[-2].replace(" ", "+")
-print(urlopen(Request(url, headers={"Cookie": f"info={info}"})).read().decode())
+
+@autocached
+def discover_next_url(url):
+    """Retrieves the riddle URL sitting at `url` — 🤷"""
+    url_base = url.rsplit("/", 1)[0]
+    new_path = read_riddle(url).rstrip("\n.").rsplit(maxsplit=1)[-1]
+    return f"{url_base}/{new_path}"
+
+
+@autocached
+def unravel_riddle(msg, new_url):
+    """Uses `message` as cookie to finally unravel the riddle at `new_url`"""
+    cookie = f"""info={msg.split('"', 2)[1].replace(" ", "+")}"""
+    riddle = read_riddle(new_url, headers={"Cookie": cookie})
+    for line in (line.lstrip() for line in riddle.splitlines()):
+        if not line.startswith("<"):
+            return line.rsplit(maxsplit=1)[-1].split(".", 1)[0]
+
+
+url = "http://www.pythonchallenge.com/pc/return/romance.html"
+msg = unravel_message(discover_url())
+response = proxy_phone("Leopold")  # duh... Mozart's father
+new_url = discover_next_url(url.replace("romance", response))
+print(unravel_riddle(msg, new_url))

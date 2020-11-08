@@ -21,5 +21,8 @@ def get_evil():
 
 
 url = "http://www.pythonchallenge.com/pc/return/disproportional.html"
-with ServerProxy(get_last_href_url(url)) as proxy:
-    print(proxy.phone(get_evil()))
+proxy_url = get_last_href_url(url)
+
+if __name__ == "__main__":
+    with ServerProxy(proxy_url) as proxy:
+        print(proxy.phone(get_evil()))
