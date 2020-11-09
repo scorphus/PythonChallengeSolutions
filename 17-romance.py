@@ -17,7 +17,6 @@ from http.cookiejar import CookieJar
 from urllib.parse import unquote_to_bytes
 from urllib.request import build_opener
 from urllib.request import HTTPCookieProcessor
-from xmlrpc.client import ServerProxy
 
 import bz2
 import sys
@@ -69,8 +68,8 @@ def unravel_message(url, cache):
 def proxy_phone(callee):
     """Uses mission 13's capabilities to phone"""
     disproportional = __import__("13-disproportional")
-    with ServerProxy(disproportional.proxy_url) as proxy:
-        return proxy.phone(callee).rsplit("-", 1)[-1].lower()
+    resp = disproportional.proxy_phone(disproportional.proxy_url, callee)
+    return resp.rsplit("-", 1)[-1].lower()
 
 
 @autocached
