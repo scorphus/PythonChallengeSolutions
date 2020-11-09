@@ -9,46 +9,52 @@
 # Copyright (c) 2018-2020, Pablo S. Blum de Aguiar <scorphus@gmail.com>
 
 # http://www.pythonchallenge.com/pc/return/balloons.html
-# http://www.pythonchallenge.com/pc/return/brightness.html
-# Source mentions deltas.gz
+# Or is it http://www.pythonchallenge.com/pc/return/brightness.html?
 
-from base64 import encodebytes
-from contextlib import ExitStack
+from auth import get_nth_comment
+from auth import read_url
 from difflib import Differ
-from urllib.request import Request
-from urllib.request import urlopen
+from image import image_to_text
+from io import BytesIO
+from PIL import Image
 
 import gzip
 
 
-url = "http://www.pythonchallenge.com/pc/return/deltas.gz"
-auth = encodebytes(b"huge:file").decode().rstrip()
-headers = {"Authorization": f"Basic {auth}"}
+def split_deltas(deltas_url):
+    """Opens and decompress a gzipped text file and splits each line into two
+    deltas"""
+    left, right = [], []
+    with gzip.open(BytesIO(read_url(deltas_url))) as deltas:
+        for line in deltas:
+            line = line.decode().rsplit("   ", 1)
+            left.append(line[0].strip())
+            right.append(line[1].strip())
+    return left, right
 
-delta_l, delta_r = [], []
 
-with gzip.open(urlopen(Request(url=url, headers=headers))) as deltas:
-    for line in deltas:
-        line = line.strip().decode()
-        delta_l.append(line[:53])
-        delta_r.append(line[56:])
-
-differ = Differ()
-
-with ExitStack() as stack:
-    left = stack.enter_context(open("18-left.png", "wb"))
-    right = stack.enter_context(open("18-right.png", "wb"))
-    equal = stack.enter_context(open("18-equal.png", "wb"))
-    for diff in differ.compare(delta_l, delta_r):
+def compare_deltas(delta_left, delta_right):
+    """Compares the deltas with difflib and returns, as bytes, the lines that
+    are equal, only on the right and on the left delta"""
+    equal, right, left = BytesIO(), BytesIO(), BytesIO()
+    for diff in Differ().compare(delta_left, delta_right):
         try:
-            chunk = bytes([int(b, 16) for b in diff[2:].split(" ")])
+            chunk = bytes(int(b, 16) for b in diff[2:].split())
         except ValueError:
-            chunk = bytes(len(chunk))
-        if diff[0] == "-":
-            left.write(chunk)
+            continue
+        if diff[0] == " ":
+            equal.write(chunk)
         elif diff[0] == "+":
             right.write(chunk)
         else:
-            equal.write(chunk)
+            left.write(chunk)
+    return equal, right, left
 
-print("Open 18-left.png, 18-right.png and 18-equal.png")
+
+url = "http://www.pythonchallenge.com/pc/return/brightness.html"
+url_base = url.rsplit("/", 1)[0]
+new_path = get_nth_comment(url, 1).rstrip().rsplit(maxsplit=1)[-1]
+deltas_url = f"{url_base}/{new_path}"
+delta_left, delta_right = split_deltas(deltas_url)
+diffs = compare_deltas(delta_left, delta_right)
+print("\n".join(image_to_text(Image.open(diff)) for diff in diffs))
