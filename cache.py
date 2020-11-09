@@ -34,7 +34,7 @@ def write_cache(file_path, cache):
 
 def _file_cacher(cacher):
     """Decorates other decorators defined below providing them with a file path
-    regardles of how they're used"""
+    regardless of how they're used"""
 
     @wraps(cacher)
     def wrapper(file_path):
