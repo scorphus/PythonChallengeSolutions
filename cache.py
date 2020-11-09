@@ -16,7 +16,7 @@ import inspect
 import pickle
 
 
-def read_cache(file_path):
+def _read_cache(file_path):
     try:
         with open(file_path, "rb") as fd:
             return pickle.load(fd)
@@ -24,7 +24,7 @@ def read_cache(file_path):
         return {}
 
 
-def write_cache(file_path, cache):
+def _write_cache(file_path, cache):
     try:
         with open(file_path, "wb") as fd:
             pickle.dump(cache, fd)
@@ -54,9 +54,9 @@ def cached(file_path):
     def decorator(f):
         @wraps(f)
         def wrapper(*args, **kwargs):
-            cache = read_cache(file_path)
+            cache = _read_cache(file_path)
             result = f(*(*args, cache), **kwargs)
-            write_cache(file_path, cache)
+            _write_cache(file_path, cache)
             return result
 
         return wrapper
@@ -81,11 +81,11 @@ def autocached(file_path):
     def decorator(f):
         @wraps(f)
         def wrapper(*args, **kwargs):
-            cache = read_cache(file_path)
+            cache = _read_cache(file_path)
             key = _get_cache_key(*args, **kwargs) or f.__name__
             if key not in cache:
                 cache[key] = f(*args, **kwargs)
-            write_cache(file_path, cache)
+            _write_cache(file_path, cache)
             return cache[key]
 
         return wrapper
