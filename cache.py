@@ -37,11 +37,13 @@ def _file_cacher(cacher):
     regardless of how they're used"""
 
     @wraps(cacher)
-    def wrapper(file_path):
+    def wrapper(file_path=None, *args, **kwargs):
         if inspect.isfunction(file_path):
             func_file_path = f"{inspect.getfile(file_path).rsplit('.', 1)[0]}.cache"
-            return cacher(func_file_path)(file_path)
-        return cacher(file_path)
+            return cacher(func_file_path)(file_path, *args, **kwargs)
+        if file_path is None:
+            file_path = f"{inspect.stack()[-1].filename.rsplit('.', 1)[0]}.cache"
+        return cacher(file_path, *args, **kwargs)
 
     return wrapper
 
@@ -73,7 +75,7 @@ def _get_cache_key(*args, **kwargs):
 
 
 @_file_cacher
-def autocached(file_path):
+def autocached(file_path, reset=False):
     """Decorates a function providing a file-based cache that is read and
     updated on every run. The function result is automatically cached and
     returned"""
@@ -83,7 +85,7 @@ def autocached(file_path):
         def wrapper(*args, **kwargs):
             cache = _read_cache(file_path)
             key = _get_cache_key(*args, **kwargs) or f.__name__
-            if key not in cache:
+            if key not in cache or reset:
                 cache[key] = f(*args, **kwargs)
             _write_cache(file_path, cache)
             return cache[key]
