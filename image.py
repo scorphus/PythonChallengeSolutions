@@ -15,7 +15,7 @@ def image_to_text(image, threshold=10, skip=6, white="##", black="  "):
     skiping some rows/cols"""
     image, lines = image.crop(image.getbbox()).convert("L"), []
     for y in range(0, image.height, skip):
-        line = [black] * (image.width // skip)
+        line = [black] * -(-image.width // skip)
         for x in range(0, image.width, skip):
             if image.getpixel((x, y)) > threshold:
                 line[x // skip] = white
