@@ -10,9 +10,7 @@
 
 # http://www.pythonchallenge.com/pc/hex/bin.html
 
-from base64 import encodebytes
-from urllib.request import Request
-from urllib.request import urlopen
+from auth import get_nth_comment
 
 import email
 import io
@@ -20,21 +18,14 @@ import wave
 
 
 url = "http://www.pythonchallenge.com/pc/hex/bin.html"
-auth = encodebytes(b"butter:fly").decode().rstrip()
-headers = {"Authorization": f"Basic {auth}"}
-
-page_source = urlopen(Request(url=url, headers=headers)).read().decode()
-page_data = page_source.split("<!--")[1].split("-->")[0].strip()
-
+page_data = get_nth_comment(url, 1).strip()
 email_message = email.message_from_string(page_data)
-wave_payload = email_message.get_payload()[0].get_payload(decode=True)
+payload = email_message.get_payload()[0].get_payload(decode=True)
 
-with wave.open(io.BytesIO(wave_payload)) as wave_read:
-    frames = wave_read.readframes(wave_read.getnframes())
-    with wave.open("19-bin.wav", "wb") as wave_write:
-        wave_write.setnchannels(wave_read.getnchannels())
-        wave_write.setsampwidth(wave_read.getsampwidth())
-        wave_write.setframerate(wave_read.getframerate())
-        wave_write.writeframesraw(b"@" + frames)
+with wave.open(io.BytesIO(payload)) as in_wav, wave.open("19-bin.wav", "wb") as out_wav:
+    out_wav.setnchannels(in_wav.getnchannels())
+    out_wav.setsampwidth(in_wav.getsampwidth())
+    out_wav.setframerate(in_wav.getframerate())
+    out_wav.writeframesraw(b"@" + in_wav.readframes(in_wav.getnframes()))
 
-print("Open 19-bin.wav")
+print("Open 19-bin.wav only to listen the word “idiot”")
