@@ -38,6 +38,12 @@ def read_url(url, headers={}):
     return open_url(url, headers).read()
 
 
+@autocached("read_url_and_headers.cache")
+def read_url_and_headers(url, headers={}):
+    resp = open_url(url, headers)
+    return resp.read(), resp.headers
+
+
 def read_riddle(url, headers={}):
     """Reads and returns the content of the mission at `url`"""
     return read_url(url, headers).decode()
