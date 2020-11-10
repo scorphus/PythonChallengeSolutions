@@ -13,6 +13,7 @@ from functools import wraps
 
 import hashlib
 import inspect
+import logging
 import pickle
 
 
@@ -29,6 +30,7 @@ def _write_cache(file_path, cache):
         with open(file_path, "wb") as fd:
             pickle.dump(cache, fd)
     except IOError:
+        logging.exception("error writing cache")
         pass
 
 
