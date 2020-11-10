@@ -8,55 +8,57 @@
 # https://opensource.org/licenses/BSD-3-Clause
 # Copyright (c) 2018-2020, Pablo S. Blum de Aguiar <scorphus@gmail.com>
 
-# http://www.pythonchallenge.com/pc/hex/bin.html
+# http://www.pythonchallenge.com/pc/hex/idiot.html
 
-from base64 import encodebytes
+from auth import get_last_href_url
+from auth import get_last_src_url
+from auth import read_riddle
+from auth import read_url
+from auth import read_url_and_headers
+from cache import autocached
 from io import BytesIO
 from urllib.error import HTTPError
-from urllib.request import Request
-from urllib.request import urlopen
 from zipfile import ZipFile
 
 
-url = "http://www.pythonchallenge.com/pc/hex/unreal.jpg"
-auth = encodebytes(b"butter:fly").decode().rstrip()
-headers = {"Authorization": f"Basic {auth}"}
+def range_header(start):
+    return {"Range": f"bytes={start}-"}
 
-range_start, range_end = None, None
-while True:
-    if range_start or range_end:
-        headers["Range"] = f"bytes={range_start}-{range_end}"
-    try:
-        req = urlopen(Request(url=url, headers=headers))
-        if range_start or range_end:
-            msg = req.read().decode().strip()
-            print(msg)
-        content_range = req.headers.get("Content-Range").replace("bytes ", "")
-        range_start_end = content_range.split("/")[0]
-        range_start, range_end = (int(x) for x in range_start_end.split("-"))
-        range_start, range_end = range_end + 1, 2 * range_end - range_start + 2
-    except HTTPError:
-        pwd = msg.split(maxsplit=2)[1].rstrip(".")[::-1]
-        break
 
-content_max = int(content_range.split("/")[1])
+@autocached
+def get_pwd_and_size(img_url):
+    """Loops through the responses, varying the Range header until it fails. By
+    then returns part of the last seen message as password and the last seen
+    range size — if it ever changes during the process, we don't care"""
+    start = size = 0
+    while True:
+        try:
+            msg, headers = read_url_and_headers(img_url, range_header(start))
+            msg = msg.decode().strip()
+        except UnicodeDecodeError:
+            pass
+        except HTTPError:
+            return msg.split(maxsplit=2)[1].rstrip(".")[::-1], int(size)
+        content_range = headers["Content-Range"].split(maxsplit=1)[1]
+        start_end, size = content_range.split("/", 1)
+        start = int(start_end.rsplit("-", 1)[-1]) + 1
 
-headers["Range"] = f"bytes={content_max}-{content_max}"
-req = urlopen(Request(url=url, headers=headers))
-msg = req.read().decode().strip()
-print(f"{msg} ({msg[::-1]})")
-print(f"(password is: {pwd})")
 
-headers["Range"] = f"bytes={content_max - 3*len(msg)//2}-{content_max}"
-req = urlopen(Request(url=url, headers=headers))
-msg = req.read().decode().strip()
-print(msg)
+def advance_rewind_and_extract(img_url, pwd, size):
+    """Finds the correct range start and use the password to ultimately extract
+    and display next mission's content"""
+    msg = read_riddle(img_url, range_header(size)).strip()
+    msg = read_riddle(img_url, range_header(size - len(msg) - 2)).strip()
+    start = msg.rstrip(".").rsplit(maxsplit=1)[-1]
+    zip_content = read_url(img_url, range_header(start)).strip()
+    with ZipFile(BytesIO(zip_content), "r") as zip_file:
+        readme, package = zip_file.namelist()
+        print(zip_file.read(readme, pwd=pwd.encode()).decode())
+        print(zip_file.extract(package, pwd=pwd.encode()))
 
-range_start = int(msg.rstrip(".").split()[-1])
-headers["Range"] = f"bytes={range_start}-{content_max}"
-req = urlopen(Request(url=url, headers=headers))
-zip_content = req.read()
-with ZipFile(BytesIO(zip_content), "r") as zip_file:
-    readme, package = zip_file.namelist()
-    print(zip_file.extract(package, pwd=pwd.encode()))
-    print(zip_file.read(readme, pwd=pwd.encode()).decode())
+
+url = "http://www.pythonchallenge.com/pc/hex/idiot.html"
+next_url = get_last_href_url(url)
+img_url = get_last_src_url(next_url)
+pwd, size = get_pwd_and_size(img_url)
+advance_rewind_and_extract(img_url, pwd, size)
