@@ -10,49 +10,59 @@
 
 # http://www.pythonchallenge.com/pc/hex/copper.html
 
-from auth import open_url
-from auth import read_riddle
+from auth import get_nth_comment
+from auth import read_url
+from cache import autocached
+from io import BytesIO
 from PIL import Image
 from PIL import ImageSequence
 
 
+@autocached
+def load_pixels(img_url):
+    """Returns a list of (x, y) coordinates of all pixels from all frames of the
+    GIT at `img_url`"""
+    image = Image.open(BytesIO(read_url(img_url)))
+    pixels = [frame.getbbox()[:2] for frame in ImageSequence.Iterator(image)]
+    min_x, min_y = min(p[0] for p in pixels), min(p[1] for p in pixels)
+    max_x, max_y = max(p[0] for p in pixels), max(p[1] for p in pixels)
+    assert image.width == image.height and min_x == min_y and max_x == max_y
+    return pixels, min_x, max(p[0] for p in pixels) - min_x
+
+
+@autocached
+def draw_word(pixels, min_pos, max_diff):
+    """Follows each pixel coordinate as direction and registers each new
+    position in the returned dict that is later displayed as a word"""
+    word = {}
+    char_width = char_count = x = y = 0
+    x_lim = y_lim = (0, 0)
+    for dx, dy in pixels:
+        dx = (dx - min_pos - max_diff // 2) // 2
+        dy = (dy - min_pos - max_diff // 2) // 2
+        if dx == 0 and dy == 0:
+            if char_width == 0:
+                char_width = x_lim[1] * 2
+            x, y = char_count * char_width, 0
+            char_count += 1
+        x += dx
+        y += dy
+        word[(x, y)] = True
+        x_lim = min(x_lim[0], x), max(x_lim[1], x + 1)
+        y_lim = min(y_lim[0], y), max(y_lim[1], y + 1)
+    return word, x_lim, y_lim
+
+
 url = "http://www.pythonchallenge.com/pc/hex/copper.html"
-riddle_source = read_riddle(url)
-riddle_data = riddle_source.split("<!--")[-1].split("-->")[0].strip("\n'")
+riddle_data = get_nth_comment(url, 1)
 
-replacement = [s for s in riddle_data.split() if "." in s][0]
-url_parts = url.split("/")
-url_parts[-1] = replacement
-url = "/".join(url_parts)
-
-image = Image.open(open_url(url))
-width, height = image.size
-assert width == height
-
-white_pixels = [frame.getbbox()[:2] for frame in ImageSequence.Iterator(image)]
-min_w = min(p[0] for p in white_pixels)
-diff_w = max(p[0] for p in white_pixels) - min_w
-
-word = {}
-char_count = char_width = x = y = 0
-x_limits = y_limits = (0, 0)
-for dx, dy in white_pixels:
-    dx = (dx - min_w - diff_w // 2) // 2
-    dy = (dy - min_w - diff_w // 2) // 2
-    if dx == 0 and dy == 0:
-        if char_width == 0:
-            char_width = x_limits[1] * 2
-        x, y = char_count * char_width, 0
-        char_count += 1
-    x += dx
-    y += dy
-    word[(x, y)] = "#"
-    x_limits = (min(x_limits[0], x), max(x_limits[1], x + 1))
-    y_limits = (min(y_limits[0], y), max(y_limits[1], y + 1))
-
+url_base = url.rsplit("/", 1)[0]
+img_name = next(s for s in riddle_data.split() if "." in s)
+pixels, min_pos, max_diff = load_pixels("/".join((url_base, img_name)))
+word, x_lim, y_lim = draw_word(pixels, min_pos, max_diff)
 print(
     "\n".join(
-        "".join(word.get((x, y), " ") for x in range(*x_limits))
-        for y in range(*y_limits)
+        "".join("#" if (x, y) in word else " " for x in range(*x_lim))
+        for y in range(*y_lim)
     )
 )
