@@ -10,6 +10,7 @@
 
 # http://www.pythonchallenge.com/pc/def/integrity.html
 
+from auth import get_last_href_url
 from auth import read_url
 
 import bz2
@@ -20,5 +21,6 @@ page_source = read_url(url).decode("unicode_escape").encode("latin1")
 page_data = page_source.split(b"<!--", 1)[1].split(b"-->", 1)[0]
 
 _, un, _, pw, _ = page_data.split(b"'")
+print(f"next: {get_last_href_url(url)}")
 print(f"user: {bz2.decompress(un).decode()}")
 print(f"pass: {bz2.decompress(pw).decode()}")
