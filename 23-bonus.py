@@ -10,19 +10,48 @@
 
 # http://www.pythonchallenge.com/pc/hex/bonus.html
 
-from auth import read_riddle
+from auth import get_nth_comment
+from contextlib import redirect_stdout
+from difflib import get_close_matches
+from difflib import ndiff
+from importlib import import_module
 
-import this
+
+def import_this():
+    """Imports the "this" module without printing the Zen of Python"""
+    with redirect_stdout(None):
+        this = import_module("this")
+        return this
 
 
-riddle_source = read_riddle("http://www.pythonchallenge.com/pc/hex/bonus.html")
-riddle_data = riddle_source.split("<!--")[-1].split("-->")[0].strip("\n'")
-print(riddle_data)
-print("Translated:", "".join(this.d.get(c, c) for c in riddle_data))
+def find_sentence(this, search):
+    """Finds the first sentence of the Zen with the similar start as `search`"""
+    sentences = this.s.splitlines()
+    for cutoff in range(6, 0, -1):
+        matches = get_close_matches(search, sentences, cutoff=cutoff / 10)
+        if matches:
+            return matches[0].lower()
 
-search = " ".join(riddle_data.split()[:-1])
-for guiding_principle in this.s.split("\n"):
-    if search in guiding_principle.lower():
-        print(guiding_principle)
-        print("Translated:", "".join(this.d.get(c, c) for c in guiding_principle))
-        break
+
+def find_word(search, sentence):
+    """Finds the first word of `sentence` that is not in `search`"""
+    return next(
+        word[2:]
+        for word in ndiff(
+            [s.rstrip(",?") for s in search.split()],
+            [s.rstrip(",.") for s in sentence.split()],
+        )
+        if word.startswith("+ ")
+    )
+
+
+def translate(this, word):
+    return "".join(this.d.get(c, c) for c in word)
+
+
+url = "http://www.pythonchallenge.com/pc/hex/bonus.html"
+search = get_nth_comment(url, 3).strip("\n'")
+this = import_this()
+sentence = find_sentence(this, search)
+word = find_word(search, sentence)
+print(translate(this, word))
