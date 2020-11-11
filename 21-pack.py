@@ -10,29 +10,36 @@
 
 # No link for this mission, please check the output data of mission 20
 
+from cache import autocached
+
 import bz2
 import zlib
 
 
-def unpack(content):
+@autocached
+def unpack(package):
+    """Unpacks package, reversing its content, and alternating between the
+    different formats, while “logging” as it goes along"""
+    with open(package, "rb") as fd:
+        content = fd.read()
+    log = ""
     while True:
         try:
             content = zlib.decompress(content)
-            print(" ", end="")
+            log += " "
             continue
         except zlib.error:
             pass
         try:
             content = bz2.decompress(content)
-            print("#", end="")
+            log += "#"
             continue
         except OSError:
             pass
         content = content[::-1]
-        print()
-        if content[0] != 120 and content[1] != 156:
-            return content
+        log += "\n"
+        if content[0] != 120:
+            return log.rstrip()
 
 
-with open("package.pack", "rb") as package:
-    print(unpack(package.read()).decode(), "👆")
+print(unpack("package.pack"))
