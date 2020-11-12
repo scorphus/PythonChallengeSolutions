@@ -46,4 +46,6 @@ def extract_solution(data):
 url = "http://www.pythonchallenge.com/pc/hex/speedboat.html"
 pil_pixels, wand_pixels = get_pixel_values(url)
 data = filter_different_pixels(pil_pixels, wand_pixels)
-print("url : {}\nuser: {}\npass: {}".format(*extract_solution(data)))
+new_path, *credentials = extract_solution(data)
+new_url = f"{url.rsplit('/', 1)[0]}/{new_path}"
+print("url : {}\nuser: {}\npass: {}".format(new_url, *credentials))
