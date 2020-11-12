@@ -10,11 +10,17 @@
 
 # http://www.pythonchallenge.com/pc/hex/ambiguity.html
 
-from auth import open_url
-from auth import read_riddle
+from auth import get_last_src_url
+from auth import read_url
+from cache import autocached
+from cache import cached
+from image import image_to_text
 from io import BytesIO
 from PIL import Image
+from PIL import UnidentifiedImageError
 from zipfile import ZipFile
+
+import logging
 
 
 turns_set = {(1, 0), (0, 1), (-1, 0), (0, -1)}
@@ -29,15 +35,13 @@ turns_map = {
 
 def load_maze(url):
     """Fetches and loads maze.png then returns its pixels and size"""
-    riddle_source = read_riddle(url)
-    url = url.replace("ambiguity.html", riddle_source.split('src="')[-1].split('"')[0])
-    maze = Image.open(open_url(url))
+    maze_url = get_last_src_url(url)
+    maze = Image.open(BytesIO(read_url(maze_url)))
     return maze.load(), maze.size
 
 
 def find_black_square(maze, size, row):
-    width, _ = size
-    for x in range(width):
+    for x in range(size[0]):
         if maze[x, row][0] == 0:
             return x, row
 
@@ -50,29 +54,53 @@ def explore(curr_dir, curr_square, maze):
             yield (x + dx, y + dy), (dx, dy)
 
 
-def tumble_down(maze, start, finish):
+@cached
+def tumble_down(maze, start, finish, cache):
     """Tumbles down the maze in a DFS fashion"""
-    data = []
-    visited, next_squares = {start}, [(start, 0, (0, 1))]
-    while next_squares:
-        curr_square, steps, curr_dir = next_squares.pop()
-        if curr_square == finish:
-            break
-        # Deadend? Remove all steps in wrong direction
-        del data[steps:]
-        visited.add(curr_square)
-        for square, direction in explore(curr_dir, curr_square, maze):
-            if square not in visited:
-                next_squares.append((square, steps + 1, direction))
-        data.append(maze[curr_square][0])
-    # Skip every even-indexed pixel 🤷🏻‍♂️
-    return bytes(data[1::2])
+    if "result_data" not in cache:
+        data, visited, next_squares = [], {start}, [(start, 0, (0, 1))]
+        while next_squares:
+            curr_square, steps, curr_dir = next_squares.pop()
+            if curr_square == finish:
+                break
+            # Deadend? Remove all steps in wrong direction
+            del data[steps:]
+            visited.add(curr_square)
+            for square, direction in explore(curr_dir, curr_square, maze):
+                if square not in visited:
+                    next_squares.append((square, steps + 1, direction))
+            data.append(maze[curr_square][0])
+        # Skip every even-indexed pixel 🤷
+        cache["result_data"] = bytes(data[1::2])
+    return cache["result_data"]
+
+
+def extract_image(data):
+    """Tries and extracts the image inside data (which is a zipfile)"""
+    with ZipFile(BytesIO(data)) as zip_file:
+        for name in zip_file.namelist()[::-1]:
+            try:
+                return Image.open(BytesIO(zip_file.read(name)))
+            except UnidentifiedImageError:
+                logging.warning("%s does not seem to be an image", name)
+
+
+@autocached
+def crop_blue_only(image):
+    """Crops the image and creates a new one with only the bluest pixels"""
+    img = Image.new("L", (2 * image.width // 3 + 1, image.height // 2))
+    for y in range(image.height // 2, image.height):
+        for x in range(image.width // 3, image.width):
+            r, g, b = image.getpixel((x, y))
+            if b > 1.2 * r and b > 1.2 * g:
+                img.putpixel((x - image.width // 3, y - image.height // 2), b)
+    return img
 
 
 maze, size = load_maze("http://www.pythonchallenge.com/pc/hex/ambiguity.html")
 start = find_black_square(maze, size, 0)
 finish = find_black_square(maze, size, size[1] - 1)
 data = tumble_down(maze, start, finish)
-with ZipFile(BytesIO(data), "r") as zip_file:
-    print("Check {} and note {} (why is it there?)".format(*zip_file.namelist()))
-    zip_file.extractall()
+image = extract_image(data)
+new_image = crop_blue_only(image)
+print(image_to_text(new_image))
