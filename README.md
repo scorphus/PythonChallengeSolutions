@@ -15,8 +15,8 @@ a game in which each level can be solved by a bit of (Python) programming.
 
 ## License
 
-Code in this repository is distributed under the terms of the 3-Clause BSD
-License (BSD-3-Clause).
+Code in this repository is distributed under the terms of the BSD 3-Clause
+License.
 
 See [LICENSE](LICENSE) for details.
 
