@@ -11,13 +11,15 @@
 # http://www.pythonchallenge.com/pc/ring/bell.html
 
 from auth import get_last_src_url
-from auth import open_url
+from auth import read_url
+from io import BytesIO
 from itertools import islice
 from PIL import Image as Image
 
 
 img_url = get_last_src_url("http://www.pythonchallenge.com/pc/ring/bell.html")
-greens = islice(Image.open(open_url(img_url)).tobytes(), 1, None, 3)
+greens = islice(Image.open(BytesIO(read_url(img_url))).tobytes(), 1, None, 3)
 for curr, prev in zip(greens, greens):
-    if abs(curr - prev) != 42:  # the ultimate answer, oh!!! Boring mission 😒
+    if abs(curr - prev) != 42:  # 😱 the ultimate answer! Boring mission 😒
         print(chr(abs(curr - prev)), end="")
+print(" (hint: ‘it’ is Python)")
