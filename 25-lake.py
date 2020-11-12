@@ -12,6 +12,8 @@
 
 from auth import get_last_src_url
 from auth import read_url
+from cache import autocached
+from image import image_to_text
 from itertools import chain
 from PIL import Image
 
@@ -19,6 +21,7 @@ import io
 import wave
 
 
+@autocached
 def read_waves(url):
     """Reads all the WAVE files there are available under similar URLs"""
     i, waves = 1, []
@@ -32,6 +35,7 @@ def read_waves(url):
             return waves
 
 
+@autocached
 def create_image(waves):
     """Creates an image out of the WAVE frames"""
     wav_size = int((len(waves[0]) / 3) ** 0.5)  # a square with len(waves[0]) RGB pixels
@@ -52,7 +56,18 @@ def create_image(waves):
     return new_image
 
 
+@autocached
+def blue_only(image):
+    """Creates a new image with only the bluest pixels"""
+    img = Image.new("L", (image.width, image.height))
+    for y in range(image.height):
+        for x in range(image.width):
+            r, g, b = image.getpixel((x, y))
+            if b > 1.2 * r and b > 1.2 * g:
+                img.putpixel((x, y), b)
+    return img
+
+
 url = get_last_src_url("http://www.pythonchallenge.com/pc/hex/lake.html")
-image_name = "25-lake.png"
-create_image(read_waves(url.replace("jpg", "wav"))).save(image_name)
-print("Check", image_name)
+image = create_image(read_waves(url.replace("jpg", "wav")))
+print(image_to_text(blue_only(image)))
