@@ -9,6 +9,7 @@
 
 # http://www.pythonchallenge.com/
 
+from collections import Hashable
 from functools import wraps
 
 import hashlib
@@ -71,7 +72,7 @@ def cached(file_path):
 def _get_cache_key(*args, **kwargs):
     if not args and not kwargs:
         return None
-    if args and not kwargs and len(args) == 1:
+    if args and not kwargs and len(args) == 1 and isinstance(args[0], Hashable):
         return args[0]
     return hashlib.sha1(pickle.dumps((args, kwargs))).hexdigest()
 
