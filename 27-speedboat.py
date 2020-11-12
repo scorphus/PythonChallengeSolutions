@@ -37,7 +37,7 @@ def filter_different_pixels(pil_pixels, wand_pixels):
 
 
 def extract_solution(data):
-    """Decompress data and yields words that aren't “Pythonic”"""
+    """Decompresses data and yields words that aren't “Pythonic”"""
     for word in sorted(set(bz2.decompress(bytes(data)).decode().split())):
         if not keyword.iskeyword(word) and not hasattr(__builtins__, word):
             yield word
