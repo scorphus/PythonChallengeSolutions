@@ -11,10 +11,9 @@
 # http://www.pythonchallenge.com/pc/ring/guido.html
 
 from auth import read_riddle
-
-import bz2
+from bz2 import decompress
 
 
 riddle = read_riddle("http://www.pythonchallenge.com/pc/ring/guido.html")
-data = (len(line) for line in riddle.splitlines() if "<" not in line)
-print(bz2.decompress(bytes(data)).decode())
+data = bytes(len(line) for line in riddle.splitlines() if "<" not in line)
+print(decompress(data).decode().rstrip("!").rsplit(maxsplit=1)[-1])
