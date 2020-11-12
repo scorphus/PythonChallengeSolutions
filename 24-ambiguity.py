@@ -101,6 +101,8 @@ maze, size = load_maze("http://www.pythonchallenge.com/pc/hex/ambiguity.html")
 start = find_black_square(maze, size, 0)
 finish = find_black_square(maze, size, size[1] - 1)
 data = tumble_down(maze, start, finish)
-image = extract_image(data)
-new_image = crop_blue_only(image)
-print(image_to_text(new_image))
+
+if __name__ == "__main__":
+    image = extract_image(data)
+    new_image = crop_blue_only(image)
+    print(image_to_text(new_image))

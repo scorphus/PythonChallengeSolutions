@@ -11,11 +11,20 @@
 # http://www.pythonchallenge.com/pc/hex/decent.html
 
 from auth import read_riddle
-from wand.image import Image
-from zipfile import crc32  # NOQA used by _update_crc recompiled in patch_update_crc
+from image import image_to_text
+from importlib import import_module
+from io import BytesIO
+from PIL import Image
+from wand.exceptions import BaseError as WandBaseError
+from wand.image import Image as WandImage
 
 import inspect
 import zipfile
+
+
+def get_ambiguity_data():
+    ambiguity = import_module("24-ambiguity")
+    return ambiguity.data
 
 
 def extract_source(func):
@@ -26,45 +35,42 @@ def extract_source(func):
 
 
 def patch_update_crc():
-    """Monkey-patch `ZipExtFile._update_crc` to bypass any bad CRC"""
+    """Monkey-patches `ZipExtFile._update_crc` to bypass any bad CRC"""
     update_crc_src = extract_source(zipfile.ZipExtFile._update_crc).replace(
         "raise", "return  #"
     )
-    exec(compile(update_crc_src, "<string>", "exec"))
-    zipfile.ZipExtFile._update_crc = locals()["_update_crc"]  # defined at runtime above
+    exec_globals = {"crc32": zipfile.crc32}
+    exec(compile(update_crc_src, "<string>", "exec"), exec_globals)
+    zipfile.ZipExtFile._update_crc = exec_globals["_update_crc"]
 
 
-def reveal_mybroken_gif():
-    """Extract a gif from a corrupt zip file and displays it as text"""
+def extract_image(zip_data):
+    """Extracts an image from a corrupt zip file inside `zip_data`"""
     patch_update_crc()
-    try:
-        with zipfile.ZipFile("mybroken.zip", "r") as zip_file, zip_file.open(
-            zip_file.namelist()[0]
-        ) as gif_file:
-            # Pillow couldn't read the corrupt gif, even with
-            # PIL.ImageFile.LOAD_TRUNCATED_IMAGES set to True
-            mybroken, text = Image(file=gif_file), ""
-            for y in range(0, mybroken.size[1], 2):
-                line = ""
-                for x in range(0, mybroken.size[0], 2):
-                    if not mybroken[x, y].blue:
-                        line += " "
-                    else:
-                        line += "*"
-                if "*" in line:
-                    text += line + "\n"
-            return text
-    except FileNotFoundError:
-        return "Please run mission 24 and rerun this mission"
+    with zipfile.ZipFile(BytesIO(zip_data)) as outer:
+        for name in outer.namelist():
+            try:
+                with zipfile.ZipFile(outer.open(name)) as inner, inner.open(
+                    inner.namelist()[0]
+                ) as img_file:
+                    # Pillow couldn't read the corrupt gif, even with
+                    # PIL.ImageFile.LOAD_TRUNCATED_IMAGES set to True
+                    return WandImage(file=img_file)
+            except (zipfile.BadZipFile, WandBaseError):
+                pass
 
 
-print(reveal_mybroken_gif())
+ambiguity_data = get_ambiguity_data()
+image = extract_image(ambiguity_data)
+image_data = image.export_pixels()
+pil_image = Image.frombytes("RGBA", image.size, bytes(image_data))
+print(image_to_text(pil_image, skip=3))
 
 for line in read_riddle(
     "http://www.pythonchallenge.com/pc/hex/decent.html"
 ).splitlines():
-    if "<" in line:
-        continue
     if not line:
         break
-    print(line)
+    if "<" in line:
+        continue
+    print(line.rsplit(maxsplit=1)[-1])
