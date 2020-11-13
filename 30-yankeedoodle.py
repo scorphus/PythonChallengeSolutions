@@ -17,23 +17,21 @@ from math import sqrt
 
 
 def read_csv_cells(url):
-    """Read the cells of the CSV mentioned in the riddle"""
+    """Reads the cells of the CSV mentioned in the riddle"""
     csv_url = get_last_src_url(url).replace("jpg", "csv")
     rows = (line.rstrip(",").split(", ") for line in read_riddle(csv_url).splitlines())
     return list(chain.from_iterable(rows))
 
 
-def obtain_factors(n):
-    """Obtain the factors of the length of the list of cells"""
-    size, factors = n, []
-    for n in range(2, int(sqrt(size))):
-        if size % n == 0:
-            factors.extend([n, size // n])
-    return factors
+def factorize(length):
+    """Obtains the factors of `length`"""
+    for n in range(2, int(sqrt(length))):
+        if length % n == 0:
+            return n, length // n
 
 
 def extract_formula(cells, width, height):
-    """Extract the formula hidden in the CSV"""
+    """Extracts the formula hidden in the CSV"""
     it = iter(cells)
     formula = [[" "] * width for _ in range(height)]
     for x in range(width):
@@ -44,17 +42,14 @@ def extract_formula(cells, width, height):
 
 
 def apply_formula(cells):
-    """Apply the hidden formula on cells"""
+    """Applies the hidden formula on cells"""
     it = iter(cells)
-    while True:
-        try:
-            yield int(next(it)[5] + next(it)[5] + next(it)[6])
-        except StopIteration:
-            break
+    for _ in range(len(cells) // 3):
+        yield int(next(it)[5] + next(it)[5] + next(it)[6])
 
 
 url = "http://www.pythonchallenge.com/pc/ring/yankeedoodle.html"
 cells = read_csv_cells(url)
-factors = obtain_factors(len(cells))
+factors = factorize(len(cells))
 print("\n".join("".join(row) for row in extract_formula(cells, *factors[::-1])))
 print(bytes(apply_formula(cells)).decode())
