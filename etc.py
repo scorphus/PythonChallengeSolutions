@@ -9,6 +9,17 @@
 
 # http://www.pythonchallenge.com/
 
+from math import sqrt
+
+
+def factorize(number):
+    """Obtains the factors of `number`"""
+    factors = []
+    for factor in range(2, int(sqrt(number))):
+        if number % factor == 0:
+            factors.extend([factor, number // factor])
+    return factors
+
 
 def image_to_text(image, threshold=10, skip=6, white="##", black="  "):
     """Converts an image to text, lighting pixel greater than a threshold and

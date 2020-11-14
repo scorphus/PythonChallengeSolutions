@@ -14,7 +14,7 @@
 from auth import get_nth_comment
 from auth import read_url
 from difflib import Differ
-from image import image_to_text
+from etc import image_to_text
 from io import BytesIO
 from PIL import Image
 

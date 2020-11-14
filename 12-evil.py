@@ -12,7 +12,7 @@
 
 from auth import get_last_src_url
 from auth import read_url
-from image import image_to_text
+from etc import image_to_text
 from io import BytesIO
 from PIL import Image
 from PIL import ImageFile

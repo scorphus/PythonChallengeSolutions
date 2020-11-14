@@ -12,8 +12,8 @@
 
 from auth import get_last_src_url
 from auth import read_riddle
+from etc import factorize
 from itertools import chain
-from math import sqrt
 
 
 def read_csv_cells(url):
@@ -21,13 +21,6 @@ def read_csv_cells(url):
     csv_url = get_last_src_url(url).replace("jpg", "csv")
     rows = (line.rstrip(",").split(", ") for line in read_riddle(csv_url).splitlines())
     return list(chain.from_iterable(rows))
-
-
-def factorize(length):
-    """Obtains the factors of `length`"""
-    for n in range(2, int(sqrt(length))):
-        if length % n == 0:
-            return n, length // n
 
 
 def extract_formula(cells, width, height):

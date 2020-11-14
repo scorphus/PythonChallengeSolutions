@@ -11,7 +11,7 @@
 # http://www.pythonchallenge.com/pc/hex/decent.html
 
 from auth import read_riddle
-from image import image_to_text
+from etc import image_to_text
 from importlib import import_module
 from io import BytesIO
 from PIL import Image
