@@ -19,6 +19,7 @@ credentials = {
     "http://www.pythonchallenge.com/pc/return": b"huge:file",
     "http://www.pythonchallenge.com/pc/hex": b"butter:fly",
     "http://www.pythonchallenge.com/pc/ring": b"repeat:switch",
+    "http://www.pythonchallenge.com/pc/rock": b"kohsamui:thailand",
 }
 
 
@@ -49,10 +50,15 @@ def read_riddle(url, headers={}):
     return read_url(url, headers).decode()
 
 
+def get_last_attr(url, attr):
+    """Extracts the URL of the last `attr` attribute in the mission at `url`"""
+    return read_riddle(url).split(f'{attr}="')[-1].split('"')[0]
+
+
 def get_last_attr_url(url, attr):
     """Extracts the URL of the last `attr` attribute in the mission at `url`"""
-    img_src = read_riddle(url).split(f'{attr}="')[-1].split('"')[0]
-    return "{}/{}".format(url.rsplit("/", 1)[0], img_src)
+    attr = get_last_attr(url, attr)
+    return "{}/{}".format(url.rsplit("/", 1)[0], attr)
 
 
 def get_last_src_url(url):
