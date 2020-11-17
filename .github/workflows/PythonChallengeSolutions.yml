@@ -25,7 +25,7 @@ jobs:
           path: |
             ${{ env.pythonLocation}}/lib/*/site-packages/*
             ${{ env.pythonLocation}}/bin/*
-          key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ hashFiles('setup.py') }}
+          key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ hashFiles('requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-${{ matrix.python-version }}-
             ${{ runner.os }}-pip-
@@ -34,8 +34,8 @@ jobs:
         uses: actions/cache@v2
         with:
           path: "*.cache"
-          key: ${{ runner.os }}-cache-${{ matrix.python-version }}-${{ hashFiles('setup.py') }}
-          restore-keys: |
+          key: ${{ runner.os }}-cache-files-${{ matrix.python-version }}-${{ hashFiles('*.cache') }}
+          restore-keys: ${{ runner.os }}-cache-files-${{ matrix.python-version }}-${{ hashFiles('*.cache') }}
             ${{ runner.os }}-cache-${{ matrix.python-version }}-
             ${{ runner.os }}-cache-
             ${{ runner.os }}-
