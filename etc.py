@@ -14,11 +14,11 @@ from math import sqrt
 
 def factorize(number):
     """Obtains the factors of `number`"""
-    factors = []
-    for factor in range(2, int(sqrt(number))):
+    factors = set()
+    for factor in range(2, int(sqrt(number)) + 1):
         if number % factor == 0:
-            factors.extend([factor, number // factor])
-    return factors
+            factors.update({factor, number // factor})
+    return sorted(factors)
 
 
 def image_to_text(image, threshold=10, skip=6, white="##", black="  "):
