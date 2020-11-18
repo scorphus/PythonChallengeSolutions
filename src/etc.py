@@ -9,6 +9,7 @@
 
 # http://www.pythonchallenge.com/
 
+from itertools import product
 from math import sqrt
 
 
@@ -24,11 +25,10 @@ def factorize(number):
 def image_to_text(image, threshold=10, skip=6, white="##", black="  "):
     """Converts an image to text, lighting pixel greater than a threshold and
     skiping some rows/cols"""
-    image, lines = image.crop(image.getbbox()).convert("L"), []
-    for y in range(0, image.height, skip):
-        line = [black] * -(-image.width // skip)
-        for x in range(0, image.width, skip):
-            if image.getpixel((x, y)) > threshold:
-                line[x // skip] = white
-        lines.append("".join(line))
-    return "\n".join(filter(str.strip, lines))
+    image = image.crop(image.getbbox()).convert("L")
+    cols, rows = -(-image.width // skip), -(-image.height // skip)  # ceiling
+    lines = [[black] * cols for _ in range(rows)]
+    for (x, y) in product(range(0, image.width, skip), range(0, image.height, skip)):
+        if image.getpixel((x, y)) > threshold:
+            lines[y // skip][x // skip] = white
+    return "\n".join(filter(str.strip, map("".join, lines)))
