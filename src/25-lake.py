@@ -36,7 +36,6 @@ def read_waves(url):
             return waves
 
 
-@autocached
 def create_image(waves):
     """Creates an image out of the WAVE frames"""
     wav_size = int((len(waves[0]) / 3) ** 0.5)  # a square with len(waves[0]) RGB pixels
