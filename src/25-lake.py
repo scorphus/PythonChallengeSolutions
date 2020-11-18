@@ -14,6 +14,7 @@ from auth import get_last_src_url
 from auth import read_url
 from cache import autocached
 from etc import image_to_text
+from itertools import product
 from PIL import Image
 from urllib.error import HTTPError
 
@@ -50,17 +51,17 @@ def create_image(waves):
 
 
 @autocached
-def blue_only(image):
-    """Creates a new image with only the bluest pixels"""
-    img = Image.new("L", (image.width, image.height))
-    for y in range(image.height):
-        for x in range(image.width):
-            r, g, b = image.getpixel((x, y))
-            if b > 1.2 * r and b > 1.2 * g:
-                img.putpixel((x, y), b)
-    return img
+def highlight_blue(image):
+    """Highlights the bluest pixels of image"""
+    for xy in product(range(image.width), range(image.height)):
+        r, g, b = image.getpixel(xy)
+        if b > 1.2 * r and b > 1.2 * g:
+            image.putpixel(xy, (255,) * 3)
+        else:
+            image.putpixel(xy, (0,) * 3)
+    return image
 
 
 url = get_last_src_url("http://www.pythonchallenge.com/pc/hex/lake.html")
 image = create_image(read_waves(url.replace("jpg", "wav")))
-print(image_to_text(blue_only(image)))
+print(image_to_text(highlight_blue(image)))
