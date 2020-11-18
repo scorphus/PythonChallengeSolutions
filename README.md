@@ -20,7 +20,7 @@ License.
 
 See [LICENSE](LICENSE) for details.
 
-[badge]: https://github.com/scorphus/PythonChallengeSolutions/workflows/PythonChallengeSolutions/badge.svg
-[build]: https://github.com/scorphus/PythonChallengeSolutions/actions?query=workflow%3APythonChallengeSolutions
+[badge]: https://github.com/scorphus/PythonChallengeSolutions/workflows/build/badge.svg
+[build]: https://github.com/scorphus/PythonChallengeSolutions/actions?query=workflow%3Abuild
 [codebeat_badge]: https://codebeat.co/badges/39021760-ff95-4180-af73-36c1c553b262
 [codebeat_link]: https://codebeat.co/projects/github-com-scorphus-pythonchallengesolutions-pythonchallenge
