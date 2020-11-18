@@ -16,6 +16,7 @@ from cache import autocached
 from etc import image_to_text
 from itertools import chain
 from PIL import Image
+from urllib.error import HTTPError
 
 import io
 import wave
@@ -31,7 +32,7 @@ def read_waves(url):
             with wave.open(io.BytesIO(payload)) as wave_read:
                 waves.append(wave_read.readframes(wave_read.getnframes()))
             i += 1
-        except Exception:
+        except HTTPError:
             return waves
 
 
