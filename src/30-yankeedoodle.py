@@ -14,6 +14,7 @@ from auth import get_last_src_url
 from auth import read_riddle
 from etc import factorize
 from itertools import chain
+from itertools import product
 
 
 def read_csv_cells(url):
@@ -27,10 +28,9 @@ def extract_formula(cells, width, height):
     """Extracts the formula hidden in the CSV"""
     it = iter(cells)
     formula = [[" "] * width for _ in range(height)]
-    for x in range(width):
-        for y in range(height):
-            if float(next(it)) < round(1 - height / width, 1):
-                formula[y][x] = "#"
+    for x, y in product(range(width), range(height)):
+        if float(next(it)) < round(1 - height / width, 1):
+            formula[y][x] = "#"
     return formula
 
 
