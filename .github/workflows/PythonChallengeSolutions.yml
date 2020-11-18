@@ -50,10 +50,10 @@ jobs:
       - name: Upload generated artifacts for the sake of ... fun!
         uses: actions/upload-artifact@v2
         with:
-          name: images-${{ matrix.python-version }}
+          name: artifacts-${{ matrix.python-version }}
           path: |
-            *.gif
+            src/*.cache
+            *.pack
             *.png
-            *.jpg
             *.wav
         if: ${{ always() }}
