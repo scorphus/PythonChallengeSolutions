@@ -1,4 +1,4 @@
-# Python Challenge Solutions [![PythonChallengeSolutions][badge]][build]
+# Python Challenge Solutions [![PythonChallengeSolutions][badge]][build] [![codebeat badge][codebeat_badge]][codebeat_link]
 
 **To keep the axe sharp!**
 
@@ -22,3 +22,5 @@ See [LICENSE](LICENSE) for details.
 
 [badge]: https://github.com/scorphus/PythonChallengeSolutions/workflows/PythonChallengeSolutions/badge.svg
 [build]: https://github.com/scorphus/PythonChallengeSolutions/actions?query=workflow%3APythonChallengeSolutions
+[codebeat_badge]: https://codebeat.co/badges/39021760-ff95-4180-af73-36c1c553b262
+[codebeat_link]: https://codebeat.co/projects/github-com-scorphus-pythonchallengesolutions-pythonchallenge
