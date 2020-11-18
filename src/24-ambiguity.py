@@ -16,6 +16,7 @@ from cache import autocached
 from cache import cached
 from etc import image_to_text
 from io import BytesIO
+from itertools import product
 from PIL import Image
 from PIL import UnidentifiedImageError
 from zipfile import ZipFile
@@ -57,21 +58,20 @@ def explore(curr_dir, curr_square, maze):
 @cached
 def tumble_down(maze, start, finish, cache):
     """Tumbles down the maze in a DFS fashion"""
-    if "result_data" not in cache:
-        data, visited, next_squares = [], {start}, [(start, 0, (0, 1))]
-        while next_squares:
-            curr_square, steps, curr_dir = next_squares.pop()
-            if curr_square == finish:
-                break
-            # Deadend? Remove all steps in wrong direction
-            del data[steps:]
-            visited.add(curr_square)
-            for square, direction in explore(curr_dir, curr_square, maze):
-                if square not in visited:
-                    next_squares.append((square, steps + 1, direction))
-            data.append(maze[curr_square][0])
-        # Skip every even-indexed pixel 🤷
-        cache["result_data"] = bytes(data[1::2])
+    if "result_data" in cache:
+        return cache["result_data"]
+    data, visited, next_squares = [], {start}, [(start, 0, (0, 1))]
+    while next_squares:
+        curr_square, steps, curr_dir = next_squares.pop()
+        if curr_square == finish:
+            break
+        del data[steps:]  # Deadend? Remove all steps in wrong direction
+        visited.add(curr_square)
+        for square, direction in explore(curr_dir, curr_square, maze):
+            if square not in visited:
+                next_squares.append((square, steps + 1, direction))
+        data.append(maze[curr_square][0])
+    cache["result_data"] = bytes(data[1::2])  # Skip every even-indexed pixel 🤷
     return cache["result_data"]
 
 
@@ -87,14 +87,13 @@ def extract_image(data):
 
 @autocached
 def crop_blue_only(image):
-    """Crops the image and creates a new one with only the bluest pixels"""
-    img = Image.new("L", (2 * image.width // 3 + 1, image.height // 2))
-    for y in range(image.height // 2, image.height):
-        for x in range(image.width // 3, image.width):
-            r, g, b = image.getpixel((x, y))
-            if b > 1.2 * r and b > 1.2 * g:
-                img.putpixel((x - image.width // 3, y - image.height // 2), b)
-    return img
+    """Returns a cropped image with `image`'s bluest pixels"""
+    img = Image.new("L", (image.width, image.height))
+    for xy in product(range(image.width), range(image.height)):
+        r, g, b = image.getpixel(xy)
+        if b > 1.2 * r and b > 1.2 * g:
+            img.putpixel(xy, b)
+    return img.crop((0, img.height // 2, img.width, img.height))
 
 
 maze, size = load_maze("http://www.pythonchallenge.com/pc/hex/ambiguity.html")
