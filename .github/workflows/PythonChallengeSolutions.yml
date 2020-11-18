@@ -35,8 +35,10 @@ jobs:
         with:
           path: "*.cache"
           key: ${{ runner.os }}-cache-files-${{ matrix.python-version }}-${{ hashFiles('*.cache') }}
-          restore-keys: ${{ runner.os }}-cache-files-${{ matrix.python-version }}-${{ hashFiles('*.cache') }}
-            ${{ runner.os }}-cache-${{ matrix.python-version }}-
+          restore-keys: |
+            ${{ runner.os }}-cache-files-${{ matrix.python-version }}-${{ hashFiles('*.cache') }}
+            ${{ runner.os }}-cache-files-${{ matrix.python-version }}-
+            ${{ runner.os }}-cache-files-
             ${{ runner.os }}-cache-
             ${{ runner.os }}-
       - name: setup-ci
