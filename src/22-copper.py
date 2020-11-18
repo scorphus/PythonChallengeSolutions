@@ -30,7 +30,6 @@ def load_pixels(img_url):
     return pixels, min_x, max(p[0] for p in pixels) - min_x
 
 
-@autocached
 def draw_word(pixels, min_pos, max_diff):
     """Follows each pixel coordinate as direction and registers each new
     position in the returned dict that is later displayed as a word"""
