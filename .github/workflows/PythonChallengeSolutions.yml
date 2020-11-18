@@ -33,13 +33,13 @@ jobs:
       - name: Cache cache files
         uses: actions/cache@v2
         with:
-          path: "*.cache"
-          key: ${{ runner.os }}-cache-files-${{ matrix.python-version }}-${{ hashFiles('*.cache') }}
+          path: "src/*.cache"
+          key: ${{ runner.os }}-src-cache-${{ matrix.python-version }}-${{ hashFiles('src/*.cache') }}
           restore-keys: |
-            ${{ runner.os }}-cache-files-${{ matrix.python-version }}-${{ hashFiles('*.cache') }}
-            ${{ runner.os }}-cache-files-${{ matrix.python-version }}-
-            ${{ runner.os }}-cache-files-
-            ${{ runner.os }}-cache-
+            ${{ runner.os }}-src-cache-${{ matrix.python-version }}-${{ hashFiles('src/*.cache') }}
+            ${{ runner.os }}-src-cache-${{ matrix.python-version }}-
+            ${{ runner.os }}-src-cache-
+            ${{ runner.os }}-src-
             ${{ runner.os }}-
       - name: setup-ci
         run: make setup-ci

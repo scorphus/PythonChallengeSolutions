@@ -18,7 +18,7 @@ from io import BytesIO
 from PIL import Image
 
 
-@cached("16-mozart.cache")
+@cached
 def generate_aligned_image(image, pivot, cache):
     """Generates a new image by aligning the rows of the original using
     the pivot pixel as reference"""

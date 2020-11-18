@@ -34,12 +34,12 @@ def open_url(url, headers={}):
     return urlopen(Request(url=url, headers=headers))
 
 
-@autocached("read_url.cache")
+@autocached
 def read_url(url, headers={}):
     return open_url(url, headers).read()
 
 
-@autocached("read_url_and_headers.cache")
+@autocached
 def read_url_and_headers(url, headers={}):
     resp = open_url(url, headers)
     return resp.read(), resp.headers

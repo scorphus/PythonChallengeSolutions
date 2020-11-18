@@ -14,7 +14,7 @@ from auth import read_riddle
 from cache import cached
 
 
-@cached("04-linkedlist.cache")
+@cached
 def unravel_riddle(url, cache):
     """Follows the riddle leads until the end to ultimately unravel it"""
     curr = 12345

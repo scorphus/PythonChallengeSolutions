@@ -1,3 +1,4 @@
-*
-!*.py
-!*.rs
+*.cache
+*.pack
+*.png
+*.wav
