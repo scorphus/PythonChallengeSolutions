@@ -14,7 +14,6 @@ from auth import get_last_src_url
 from auth import read_url
 from cache import autocached
 from etc import image_to_text
-from itertools import chain
 from PIL import Image
 from urllib.error import HTTPError
 
@@ -40,19 +39,13 @@ def create_image(waves):
     """Creates an image out of the WAVE frames"""
     wav_size = int((len(waves[0]) / 3) ** 0.5)  # a square with len(waves[0]) RGB pixels
     size = int(len(waves) ** 0.5) * wav_size  # a square with len(waves) subsquares
+    ratio = size // wav_size
     new_image = Image.new("RGB", (size, size))
-    pad_x = pad_y = 0
-    waves_it = chain.from_iterable(waves)
-    for _ in range(len(waves)):
-        if pad_x == size:  # once a row is complete, go to the next
-            pad_x, pad_y = 0, pad_y + wav_size
-        for y in range(wav_size):
-            for x in range(wav_size):
-                new_image.putpixel(
-                    (pad_x + x, pad_y + y),
-                    (next(waves_it), next(waves_it), next(waves_it)),
-                )
-        pad_x += wav_size
+    for i, wav in enumerate(waves):
+        new_image.paste(
+            Image.frombytes("RGB", (wav_size, wav_size), wav),
+            (i % ratio * wav_size, i // ratio * wav_size),
+        )
     return new_image
 
 
