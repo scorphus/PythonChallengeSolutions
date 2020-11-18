@@ -33,13 +33,13 @@ def load_pixels(img_url):
 def draw_word(pixels, min_pos, max_diff):
     """Follows each pixel coordinate as direction and registers each new
     position in the returned dict that is later displayed as a word"""
-    word = {}
+    word, offset = {}, min_pos + max_diff // 2
     char_width = char_count = x = y = 0
     x_lim = y_lim = (0, 0)
     for dx, dy in pixels:
-        dx = (dx - min_pos - max_diff // 2) // 2
-        dy = (dy - min_pos - max_diff // 2) // 2
-        if dx == 0 and dy == 0:
+        dx = (dx - offset) // 2
+        dy = (dy - offset) // 2
+        if dx == dy == 0:
             if char_width == 0:
                 char_width = x_lim[1] * 2
             x, y = char_count * char_width, 0
