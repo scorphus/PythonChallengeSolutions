@@ -28,7 +28,7 @@ def image_to_text(image, threshold=10, skip=6, white="##", black="  "):
     image = image.crop(image.getbbox()).convert("L")
     cols, rows = -(-image.width // skip), -(-image.height // skip)  # ceiling
     lines = [[black] * cols for _ in range(rows)]
-    for (x, y) in product(range(0, image.width, skip), range(0, image.height, skip)):
+    for x, y in product(range(0, image.width, skip), range(0, image.height, skip)):
         if image.getpixel((x, y)) > threshold:
             lines[y // skip][x // skip] = white
     return "\n".join(filter(str.strip, map("".join, lines)))

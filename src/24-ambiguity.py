@@ -27,10 +27,10 @@ import logging
 turns_set = {(1, 0), (0, 1), (-1, 0), (0, -1)}
 
 turns_map = {
-    (1, 0): turns_set - {((-1, 0))},
-    (-1, 0): turns_set - {((1, 0))},
-    (0, 1): turns_set - {((0, -1))},
-    (0, -1): turns_set - {((0, 1))},
+    (1, 0): turns_set - {(-1, 0)},
+    (-1, 0): turns_set - {(1, 0)},
+    (0, 1): turns_set - {(0, -1)},
+    (0, -1): turns_set - {(0, 1)},
 }
 
 
