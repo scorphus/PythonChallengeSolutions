@@ -32,7 +32,6 @@ def _write_cache(file_path, cache):
             pickle.dump(cache, fd)
     except IOError:
         logging.exception("error writing cache")
-        pass
 
 
 def _file_cacher(cacher):
