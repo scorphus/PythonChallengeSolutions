@@ -1,4 +1,4 @@
-# Python Challenge Solutions [![PythonChallengeSolutions][badge]][build] [![codebeat badge][codebeat_badge]][codebeat_link]
+# Python Challenge Solutions [![PythonChallengeSolutions][badge]][build] [![Quality gate][sonarcloud_badge]][sonarcloud_link] [![codebeat badge][codebeat_badge]][codebeat_link]
 
 **To keep the axe sharp!**
 
@@ -24,3 +24,5 @@ See [LICENSE](LICENSE) for details.
 [build]: https://github.com/scorphus/PythonChallengeSolutions/actions?query=workflow%3Abuild
 [codebeat_badge]: https://codebeat.co/badges/39021760-ff95-4180-af73-36c1c553b262
 [codebeat_link]: https://codebeat.co/projects/github-com-scorphus-pythonchallengesolutions-pythonchallenge
+[sonarcloud_badge]: https://sonarcloud.io/api/project_badges/quality_gate?project=scorphus_PythonChallengeSolutions
+[sonarcloud_link]: https://sonarcloud.io/dashboard?id=scorphus_PythonChallengeSolutions
